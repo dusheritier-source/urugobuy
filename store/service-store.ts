@@ -1,0 +1,7 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+export type ReturnRequest = { id: string; orderId: string; orderNumber: string; customerEmail: string; reason: string; resolution: "refund" | "exchange" | "credit"; status: "requested" | "approved" | "received" | "resolved" | "rejected"; createdAt: string };
+export type Ticket = { id: string; number: string; name: string; email: string; subject: string; message: string; status: "open" | "in_progress" | "resolved"; priority: "normal" | "high"; createdAt: string; reply?: string };
+type Store = { returns: ReturnRequest[]; tickets: Ticket[]; requestReturn: (request: ReturnRequest) => void; updateReturn: (id: string, status: ReturnRequest["status"]) => void; createTicket: (ticket: Ticket) => void; updateTicket: (id: string, values: Partial<Pick<Ticket, "status" | "priority" | "reply">>) => void };
+export const useServiceStore = create<Store>()(persist((set) => ({ returns: [], tickets: [], requestReturn: (request) => set((state) => ({ returns: [request, ...state.returns] })), updateReturn: (id, status) => set((state) => ({ returns: state.returns.map((item) => item.id === id ? { ...item, status } : item) })), createTicket: (ticket) => set((state) => ({ tickets: [ticket, ...state.tickets] })), updateTicket: (id, values) => set((state) => ({ tickets: state.tickets.map((ticket) => ticket.id === id ? { ...ticket, ...values } : ticket) })) }), { name: "urugo-service" }));
