@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock } from "lucide-react";
 
@@ -42,10 +42,9 @@ export default function LoginPage() {
     }
   }
 
-  // If already logged in, just send them to profile.
-  if (!loading && user) {
-    router.replace("/profile");
-  }
+  useEffect(() => {
+    if (!loading && user) router.replace("/profile");
+  }, [loading, router, user]);
 
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-4 py-10">
