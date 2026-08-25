@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   async headers() {
-    const scriptPolicy = process.env.NODE_ENV === "production" ? "'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms" : "'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms";
+    const scriptPolicy = process.env.NODE_ENV === "production" ? "'self' 'unsafe-inline' https://apis.google.com https://www.googletagmanager.com https://www.clarity.ms" : "'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.googletagmanager.com https://www.clarity.ms";
     return [{ source: "/(.*)", headers: [
       { key: "Content-Security-Policy", value: `default-src 'self'; script-src ${scriptPolicy}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://www.google-analytics.com https://storage.googleapis.com https://firebasestorage.googleapis.com; font-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com https://*.clarity.ms; frame-src 'self' https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests`, },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
