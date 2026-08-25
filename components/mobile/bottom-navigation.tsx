@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Home, Search, ShoppingCart, Heart, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 
 const navItems: Array<{ href: string; icon: React.ComponentType<{ size?: number }>; label: string }> = [
@@ -28,7 +29,7 @@ export function BottomNavigation() {
           return (
             <Link
               key={item.href}
-              href={item.href as any}
+              href={item.href as Route}
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 py-2 transition",
                 isActive ? "text-[#8B4513]" : "text-stone-400"

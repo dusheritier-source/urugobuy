@@ -1,0 +1,93 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isStaff() {
+      return signedIn() && request.auth.token.staff == true;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    // Public shoppers may only see products explicitly marked as published.
+    match /products/{productId} {
+      allow read: if resource.data.status == "published" || isStaff();
+      allow create, update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // A customer owns their profile and nested preference/address records.
+    match /users/{userId} {
+      allow read: if owns(userId) || isStaff();
+      allow create: if owns(userId)
+        && request.resource.data.keys().hasOnly([
+          "displayName", "email", "createdAt", "updatedAt"
+        ]);
+      allow update: if owns(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "displayName", "updatedAt"
+        ]);
+      allow delete: if isAdmin();
+
+      match /addresses/{addressId} {
+        allow read, write: if owns(userId) || isStaff();
+      }
+
+      match /preferences/{preferenceId} {
+        allow read, write: if owns(userId) || isStaff();
+      }
+
+      match /wishlist/{productId} {
+        allow read, write: if owns(userId) || isStaff();
+      }
+
+      match /backInStock/{productId} {
+        allow read, write: if owns(userId) || isStaff();
+      }
+    }
+
+    // Customers can read their orders, but only trusted server code may create
+    // or change orders. The Admin SDK bypasses these client security rules.
+    match /orders/{orderId} {
+      allow read: if signedIn()
+        && (resource.data.userId == request.auth.uid || isStaff());
+      allow write: if false;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == "published" || isStaff();
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == "pending";
+      allow update, delete: if isStaff();
+    }
+
+    match /promotions/{promotionId} {
+      allow read: if resource.data.active == true || isStaff();
+      allow write: if isStaff();
+    }
+
+    // Payments, stock movements and audit records are server-only.
+    match /payments/{document=**} { allow read, write: if false; }
+    match /inventory/{document=**} { allow read, write: if false; }
+    match /auditLogs/{document=**} { allow read, write: if false; }
+    match /returns/{document=**} { allow read, write: if false; }
+    match /notificationQueue/{document=**} { allow read, write: if false; }
+    match /emailEvents/{document=**} { allow read, write: if false; }
+    match /emailSuppressions/{document=**} { allow read, write: if false; }
+
+    // Any collection not explicitly listed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

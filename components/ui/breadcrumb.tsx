@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
           <ChevronRight size={14} className="text-stone-400" />
           {item.href ? (
               <Link
-              	href={item.href as any}
+	              	href={item.href as Route}
               	className="text-stone-600 transition hover:text-[#8B4513]"
             >
               {item.label}

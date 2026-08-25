@@ -8,13 +8,15 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "check:launch": "node scripts/check-launch.mjs"
+    "check:launch": "node scripts/check-launch.mjs",
+    "admin:set-role": "node --env-file=.env.local scripts/set-admin-role.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
     "@tanstack/react-query": "^5.101.2",
     "clsx": "^2.1.1",
     "firebase": "^12.15.0",
+    "firebase-admin": "^14.3.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
@@ -23,6 +25,7 @@
     "react-dom": "19.2.4",
     "react-hook-form": "^7.81.0",
     "react-hot-toast": "^2.6.0",
+    "svix": "^2.0.0",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"

@@ -106,7 +106,7 @@ export function VoiceSearch({ onSearch, className }: VoiceSearchProps) {
 
           {transcript && (
             <div className="mt-4 rounded-[16px] bg-[#fff8f1] p-3">
-              <p className="text-sm text-stone-700 italic">"{transcript}"</p>
+              <p className="text-sm text-stone-700 italic">&ldquo;{transcript}&rdquo;</p>
             </div>
           )}
 

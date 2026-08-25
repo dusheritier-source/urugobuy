@@ -6,6 +6,7 @@ import { Mail, Lock, User } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -32,8 +33,8 @@ export default function RegisterPage() {
     try {
       await createAccount(formData.email.trim(), formData.password, formData.name);
       router.push("/profile");
-    } catch (err: any) {
-      toast.error(err?.message || "Registration failed");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setIsLoading(false);
     }
@@ -45,8 +46,8 @@ export default function RegisterPage() {
     try {
       await signInWithGoogle();
       router.push("/profile");
-    } catch (err: any) {
-      toast.error(err?.message || "Google sign in failed");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Google sign in failed");
     } finally {
       setIsLoading(false);
     }
@@ -172,9 +173,9 @@ export default function RegisterPage() {
 
           <p className="mt-4 text-center text-sm text-stone-600">
             Already have an account?{" "}
-            <a href="/login" className="font-semibold text-[#8B4513] transition hover:text-[#6d3410]">
+            <Link href="/login" className="font-semibold text-[#8B4513] transition hover:text-[#6d3410]">
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>

@@ -7,6 +7,7 @@ import type { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
+import { BackInStockButton } from "@/components/products/back-in-stock-button";
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
   const [color, setColor] = useState(product.colors[0] ?? "");
@@ -17,8 +18,8 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const toggleWishlist = useWishlistStore((state) => state.toggle);
 
   const addToCart = () => {
-    addItem(product, quantity);
-    toast.success(`${quantity} × ${product.title} added to cart`);
+    const result = addItem(product, quantity);
+    if (result.accepted > 0) toast.success(`${result.accepted} × ${product.title} added to cart`);
   };
 
   const share = async () => {
@@ -37,7 +38,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
           <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
           <button type="button" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="p-3" aria-label="Increase quantity"><Plus size={15} /></button>
         </div>
-        <Button onClick={addToCart} disabled={product.stock === 0} className="flex-1 gap-2"><ShoppingBag size={17} /> {product.stock ? "Add to cart" : "Out of stock"}</Button>
+        {product.stock > 0 ? <Button onClick={addToCart} className="flex-1 gap-2"><ShoppingBag size={17} /> Add to cart</Button> : <BackInStockButton productId={product.id} className="flex-1 gap-2" />}
         <Button variant="outline" onClick={() => { toggleWishlist(product); toast.success(saved ? "Removed from wishlist" : "Saved to wishlist"); }} aria-label="Toggle wishlist">{saved ? <Check size={17} /> : <Heart size={17} />}</Button>
         <Button variant="outline" onClick={share} aria-label="Share product"><Share2 size={17} /></Button>
       </div>

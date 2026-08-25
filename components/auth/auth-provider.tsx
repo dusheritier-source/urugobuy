@@ -38,6 +38,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       setUser(nextUser);
       setLoading(false);
+      if (nextUser) {
+        void nextUser.getIdToken().then((token) => fetch("/api/auth/session", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        })).catch(() => undefined);
+      } else {
+        void fetch("/api/auth/session", { method: "DELETE" }).catch(() => undefined);
+      }
     });
 
     return () => unsubscribe();
@@ -101,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     await signOut(auth);
+    await fetch("/api/auth/session", { method: "DELETE" });
     toast.success("Signed out");
   };
 

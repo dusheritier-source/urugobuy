@@ -34,3 +34,18 @@ npm run build
 - Connect the repository to Vercel
 - Add the same environment variables in Vercel project settings
 - Deploy
+
+Follow [PHASE_1_PRODUCTION_SETUP.md](./PHASE_1_PRODUCTION_SETUP.md) before using
+the application with production Firebase data.
+
+The authenticated server API and transactional order design are documented in
+[PHASE_2_BACKEND.md](./PHASE_2_BACKEND.md).
+
+Hosted card and Rwanda Mobile Money setup, webhooks, refunds, and reconciliation
+are documented in [PHASE_3_PAYMENTS.md](./PHASE_3_PAYMENTS.md).
+
+Cart stock reconciliation and back-in-stock alerts are documented in
+[PHASE_4_INVENTORY_CART.md](./PHASE_4_INVENTORY_CART.md).
+
+Fulfilment, returns, transactional email, and delivery webhooks are documented in
+[PHASE_5_FULFILMENT_EMAIL.md](./PHASE_5_FULFILMENT_EMAIL.md).

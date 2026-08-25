@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/locale";
 import { DEFAULT_LOCALE, getLanguageFromLocale, getRegionFromLocale, stripLocalePrefix } from "@/lib/locale";
 import { usePathname, useRouter } from "next/navigation";
+import type { Route } from "next";
 
 type LocaleContextValue = {
   locale: Locale;
@@ -72,8 +73,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 
     if (!pathname) return;
     const { rest } = stripLocalePrefix(pathname);
-    // Cast because Next's router typing is strict about known routes in TS.
-    router.push(`/${next}${rest}` as any);
+    router.push(`/${next}${rest}` as Route);
   };
 
   const value = useMemo<LocaleContextValue>(

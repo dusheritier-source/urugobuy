@@ -11,16 +11,35 @@ import { useCartStore } from "@/store/cart-store";
 
 import { useLocale } from "@/components/locale/locale-context";
 import { getRegionPricing } from "@/lib/pricing";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { promotionDiscount, usePromotionStore } from "@/store/promotion-store";
+import { firebaseReady } from "@/lib/firebase";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
+  const reconcileStock = useCartStore((s) => s.reconcileStock);
   const { locale } = useLocale();
 
   const { taxRate, shippingCost } = getRegionPricing(locale);
   const [coupon, setCoupon] = useState("");
+  const productIds = useMemo(() => items.map((item) => item.id).sort().join(","), [items]);
+
+  useEffect(() => {
+    if (!firebaseReady || !productIds) return;
+    const controller = new AbortController();
+    void fetch("/api/cart/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productIds: productIds.split(",") }),
+      signal: controller.signal,
+    }).then(async (response) => {
+      if (!response.ok) return;
+      const payload = await response.json();
+      reconcileStock(payload.products.map((product: { id: string; stock: number; price: number | null; discount: number | null }) => ({ id: product.id, stock: product.stock, price: product.price, discount: product.discount })));
+    }).catch(() => undefined);
+    return () => controller.abort();
+  }, [productIds, reconcileStock]);
 
   const subtotal = items.reduce((sum, item) => {
     const discount = item.discount || 0;

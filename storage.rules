@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      return signedIn() && request.auth.token.staff == true;
+    }
+
+    function safeImage(maxBytes) {
+      return request.resource.size < maxBytes
+        && request.resource.contentType.matches('image/(jpeg|png|webp|avif)');
+    }
+
+    match /avatars/{userId}/{fileName} {
+      allow read: if true;
+      allow create, update: if signedIn()
+        && request.auth.uid == userId
+        && safeImage(5 * 1024 * 1024);
+      allow delete: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /review-images/{userId}/{fileName} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && safeImage(8 * 1024 * 1024);
+      allow update, delete: if isStaff()
+        || (signedIn() && request.auth.uid == userId);
+    }
+
+    match /products/{fileName} {
+      allow read: if true;
+      allow create, update: if isStaff() && safeImage(12 * 1024 * 1024);
+      allow delete: if isStaff();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

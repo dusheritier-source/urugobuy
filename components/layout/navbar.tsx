@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { Bell, Heart, Menu, Search, ShoppingBag, User, LogOut, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/components/auth/auth-provider";
-import { AuthModal } from "@/components/auth/auth-modal";
 import { useLocale } from "@/components/locale/locale-context";
 
-const toLocaleHref = (locale: string, path: string) => `/${locale}${path}`;
+const toLocaleHref = (locale: string, path: string) => `/${locale}${path}` as Route;
 
 
 
@@ -41,14 +41,15 @@ function useLocalizedLinks() {
   const t = navTranslations[language] ?? navTranslations.en;
 
   const prefix = `/${locale}`;
+  const localized = (path: string) => `${prefix}${path}` as Route;
 
-  const links: Array<{ href: string; label: string }> = [
-    { href: `${prefix}/`, label: t.home },
-    { href: `${prefix}/products`, label: t.products },
-    { href: `${prefix}/categories`, label: t.categories },
-    { href: `${prefix}/deals`, label: t.deals },
-    { href: `${prefix}/about`, label: t.about },
-    { href: `${prefix}/contact`, label: t.contact },
+  const links: Array<{ href: Route; label: string }> = [
+    { href: localized("/"), label: t.home },
+    { href: localized("/products"), label: t.products },
+    { href: localized("/categories"), label: t.categories },
+    { href: localized("/deals"), label: t.deals },
+    { href: localized("/about"), label: t.about },
+    { href: localized("/contact"), label: t.contact },
   ];
 
   return links;
@@ -61,6 +62,7 @@ const PROMO_DISMISSED_KEY = "urugo:pairsPromoDismissed:v1";
 export function Navbar() {
   const pathname = usePathname();
   const { user, signOutUser } = useAuth();
+  const { locale } = useLocale();
   const links = useLocalizedLinks();
 
   const [isHydrated, setIsHydrated] = useState(false);
@@ -122,14 +124,14 @@ export function Navbar() {
             <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300">
               Register or Sign in to have a better experience —{" "}
 <Link
-                href={toLocaleHref(useLocale().locale, "/register") as any}
+                href={toLocaleHref(locale, "/register")}
                 className="font-semibold text-[#8B4513] hover:underline"
               >
                 Register
               </Link>{" "}
               or{" "}
 <Link
-                href={toLocaleHref(useLocale().locale, "/login") as any}
+                href={toLocaleHref(locale, "/login")}
                 className="font-semibold text-[#8B4513] hover:underline"
               >
                 Sign in
@@ -181,7 +183,7 @@ export function Navbar() {
         >
 
 
-<Link href={links[0].href as any} className="flex items-center gap-3">
+<Link href={links[0].href} className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#8B4513] text-lg font-semibold text-white">
               U
             </div>
@@ -194,7 +196,7 @@ export function Navbar() {
             {links.map((link) => (
               <Link
                 key={link.href}
-href={link.href as any}
+href={link.href}
                 className={cn(
                   "text-sm font-medium text-stone-600 transition hover:text-[#8B4513] dark:text-stone-300 dark:hover:text-[#8B4513]",
                   pathname === link.href && "text-[#8B4513]",
@@ -261,7 +263,7 @@ href={link.href as any}
         {isMobileOpen && (
           <nav id="mobile-navigation" className="border-t border-stone-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-slate-950 lg:hidden">
             <div className="mx-auto grid max-w-7xl gap-1">
-              {links.map((link) => <Link key={link.href} href={link.href as any} onClick={() => setIsMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-semibold text-stone-700 hover:bg-[#fff8f1] dark:text-stone-200">{link.label}</Link>)}
+              {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setIsMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-semibold text-stone-700 hover:bg-[#fff8f1] dark:text-stone-200">{link.label}</Link>)}
               <div className="mt-2 flex gap-2 border-t border-stone-200 pt-4 dark:border-white/10">
                 <Link href="/cart" onClick={() => setIsMobileOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#8B4513] px-4 py-3 text-sm font-semibold text-white"><ShoppingBag size={17} /> Cart</Link>
                 <Link href={user ? "/profile" : "/login"} onClick={() => setIsMobileOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-[#8B4513] px-4 py-3 text-sm font-semibold text-[#8B4513]"><User size={17} /> {user ? "Account" : "Sign in"}</Link>

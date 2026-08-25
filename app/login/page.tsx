@@ -22,8 +22,8 @@ export default function LoginPage() {
     try {
       await signInWithEmail(formData.email.trim(), formData.password);
       router.push("/profile");
-    } catch (err: any) {
-      toast.error(err?.message || "Login failed");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -35,8 +35,8 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
       router.push("/profile");
-    } catch (err: any) {
-      toast.error(err?.message || "Google sign in failed");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Google sign in failed");
     } finally {
       setIsLoading(false);
     }
@@ -131,10 +131,10 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-4 text-center text-sm text-stone-600">
-            Don't have an account?{" "}
-            <a href="/register" className="font-semibold text-[#8B4513] transition hover:text-[#6d3410]">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="font-semibold text-[#8B4513] transition hover:text-[#6d3410]">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

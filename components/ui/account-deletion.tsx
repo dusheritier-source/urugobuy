@@ -145,7 +145,7 @@ export function AccountDeletion({ isOpen, onClose, onConfirm, className }: Accou
             </div>
             <h3 className="mt-4 text-xl font-semibold text-stone-900">Account Deleted</h3>
             <p className="mt-2 text-sm text-stone-600">
-              Your account has been permanently deleted. We're sorry to see you go.
+              Your account has been permanently deleted. We&apos;re sorry to see you go.
             </p>
           </div>
         )}

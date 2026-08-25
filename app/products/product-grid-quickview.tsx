@@ -74,10 +74,11 @@ export function ProductsPageGridQuickView({ products }: { products: Product[] })
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    disabled={product.stock <= 0}
                     onClick={() => addItem(product, 1)}
-                    className="rounded-full border border-stone-200 px-3 py-2 text-sm font-semibold text-[#8B4513] transition hover:border-[#8B4513]"
+                    className="rounded-full border border-stone-200 px-3 py-2 text-sm font-semibold text-[#8B4513] transition hover:border-[#8B4513] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Add
+                    {product.stock > 0 ? "Add" : "Sold out"}
                   </button>
                   <button
                     type="button"

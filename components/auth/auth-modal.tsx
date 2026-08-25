@@ -5,6 +5,7 @@ import { Mail, Lock, User } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@/components/auth/auth-provider";
+import Link from "next/link";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -271,8 +272,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         <p className="text-center text-xs text-stone-500">
           By continuing, you agree to our{" "}
-          <a href="/terms" className="text-[#8B4513] hover:underline">Terms of Service</a> and{" "}
-          <a href="/privacy" className="text-[#8B4513] hover:underline">Privacy Policy</a>
+          <Link href="/terms" className="text-[#8B4513] hover:underline">Terms of Service</Link> and{" "}
+          <Link href="/privacy" className="text-[#8B4513] hover:underline">Privacy Policy</Link>
         </p>
       </div>
     </Modal>

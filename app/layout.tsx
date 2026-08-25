@@ -11,7 +11,10 @@ import "./globals.css";
 import { PrivacyAnalytics } from "@/components/analytics/privacy-analytics";
 import { StructuredData } from "@/components/ui/seo/structured-data";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://urugobuy.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Urugo Buy | Premium shopping in Rwanda",
   description: "A premium e-commerce experience for modern shoppers in Rwanda.",
   keywords: "e-commerce, Rwanda, shopping, premium, online store",

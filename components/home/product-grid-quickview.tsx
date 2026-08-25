@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Heart, Star } from "lucide-react";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -126,9 +125,10 @@ export function ProductGridQuickView({
                   </div>
                   <Button
                     variant="outline"
+                    disabled={product.stock <= 0}
                     onClick={() => addItem(product, 1)}
                   >
-                    Add to cart
+                    {product.stock > 0 ? "Add to cart" : "Out of stock"}
                   </Button>
                 </div>
               </div>

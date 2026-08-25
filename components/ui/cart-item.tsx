@@ -68,7 +68,7 @@ export function CartItem({
       // `CartItemProps` is not the same type as `Product` expected by the store.
       // Undo should re-add only the product fields + quantity.
       const { id: removedId, title: removedTitle, price, discount, image, color, size, stock } = removedItem;
-      addItem(
+      const result = addItem(
         {
           id: removedId,
           title: removedTitle,
@@ -90,7 +90,7 @@ export function CartItem({
       );
       setRemovedItem(null);
       setIsRemoving(false);
-      toast.success("Item restored to cart", {
+      if (result.accepted > 0) toast.success("Item restored to cart", {
         duration: 3000,
         icon: "✅",
       });

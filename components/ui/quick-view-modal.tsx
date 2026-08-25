@@ -7,6 +7,8 @@ import { ImageZoom } from "@/components/ui/image-zoom";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cart-store";
+import { BackInStockButton } from "@/components/products/back-in-stock-button";
+import toast from "react-hot-toast";
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -147,13 +149,13 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
           </div>
 
           <div className="mt-6 flex gap-3">
-            <button
+            {product.stock > 0 ? <button
               type="button"
-              onClick={() => addItem(product, 1)}
+              onClick={() => { const result = addItem(product, 1); if (result.accepted) toast.success(`${product.title} added to cart`); }}
               className="flex-1 rounded-full bg-[#8B4513] px-6 py-3 font-semibold text-white transition hover:bg-[#6d3410]"
             >
               Add to Cart
-            </button>
+            </button> : <BackInStockButton productId={product.id} className="flex-1" />}
             <button
               type="button"
               className="rounded-full border border-stone-200 p-3 transition hover:border-[#8B4513] hover:text-[#8B4513]"

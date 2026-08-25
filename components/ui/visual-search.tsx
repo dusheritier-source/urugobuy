@@ -316,7 +316,7 @@ export function VisualSearch({ onSearch, className }: VisualSearchProps) {
             <div className="mt-6 rounded-[16px] bg-[#fff8f1] p-4">
               <h4 className="text-sm font-semibold text-stone-900">How it works</h4>
               <p className="mt-1 text-xs text-stone-700">
-                Upload a photo of any product and we'll find similar items from our catalog.
+                Upload a photo of any product and we&apos;ll find similar items from our catalog.
                 Try uploading a fashion item, electronics, or home decor.
               </p>
             </div>
