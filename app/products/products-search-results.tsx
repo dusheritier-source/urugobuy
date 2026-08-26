@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Filter, Search, SlidersHorizontal, Star, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Route } from "next";
 import type { Product } from "@/types";
@@ -17,6 +17,8 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
   const router = useRouter();
   const pathname = usePathname();
   const addRecentSearch = useUIStore((state) => state.addRecentSearch);
+  const searchFormRef = useRef<HTMLFormElement>(null);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [query, setQuery] = useState(initialQuery);
   const [categories, setCategories] = useState<string[]>(initialCategory ? [initialCategory] : []);
   const [brands, setBrands] = useState<string[]>([]);
@@ -29,6 +31,13 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
   const pageSize = 12;
   const [catalog, setCatalog] = useState(allProducts);
   useEffect(() => { const refresh = () => setCatalog(readCatalog(allProducts)); refresh(); window.addEventListener("urugo:catalog-change", refresh); return () => window.removeEventListener("urugo:catalog-change", refresh); }, [allProducts]);
+  useEffect(() => {
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!searchFormRef.current?.contains(event.target as Node)) setSuggestionsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, []);
 
   const categoryOptions = useMemo(() => [...new Set(catalog.map((p) => p.category))].sort(), [catalog]);
   const brandOptions = useMemo(() => [...new Set(catalog.map((p) => p.brand))].sort(), [catalog]);
@@ -75,6 +84,7 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
     setQuery(trimmed);
     setPage(1);
     if (trimmed) addRecentSearch(trimmed);
+    setSuggestionsOpen(false);
     const params = new URLSearchParams();
     if (trimmed) params.set("q", trimmed);
     if (categories.length === 1) params.set("category", categories[0]);
@@ -115,13 +125,13 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
   return (
     <div className="space-y-5">
       <div className="grid gap-3 rounded-[24px] border border-stone-200/70 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900 sm:grid-cols-[1fr_auto_auto]">
-        <form className="relative" role="search" onSubmit={(event) => { event.preventDefault(); commitSearch(); }}>
+        <form ref={searchFormRef} className="relative" role="search" onSubmit={(event) => { event.preventDefault(); commitSearch(); }} onKeyDown={(event) => { if (event.key === "Escape") setSuggestionsOpen(false); }}>
           <label htmlFor="catalog-search" className="sr-only">Search the product catalog</label>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
-          <Input id="catalog-search" autoComplete="off" aria-autocomplete="list" aria-controls="catalog-suggestions" placeholder="Search products, brands, categories, colors…" className="pl-11 pr-24" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} />
+          <Input id="catalog-search" autoComplete="off" aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={suggestionsOpen && suggestions.length > 0} placeholder="Search products, brands, categories, colors…" className="pl-11 pr-24" value={query} onFocus={() => setSuggestionsOpen(true)} onChange={(e) => { setQuery(e.target.value); setSuggestionsOpen(true); setPage(1); }} />
           {query && <button type="button" aria-label="Clear search" onClick={() => commitSearch("")} className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-stone-400 hover:bg-stone-100"><X size={15} /></button>}
           <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#8B4513] px-3 py-1.5 text-xs font-semibold text-white">Search</button>
-          {suggestions.length > 0 && <div id="catalog-suggestions" role="listbox" className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-2xl border border-stone-200 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-slate-950"><div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Top matches</div>{suggestions.map((product) => <button role="option" aria-selected="false" type="button" key={product.id} onClick={() => commitSearch(product.title)} className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-stone-50 dark:hover:bg-white/5"><span className="min-w-0"><strong className="block truncate">{product.title}</strong><span className="text-xs text-stone-500">{product.brand} · {product.category}</span></span><span className="ml-3 text-xs font-semibold">${product.price.toFixed(2)}</span></button>)}</div>}
+          {suggestionsOpen && suggestions.length > 0 && <div id="catalog-suggestions" role="listbox" className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-2xl border border-stone-200 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-slate-950"><div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Top matches</div>{suggestions.map((product) => <button role="option" aria-selected="false" type="button" key={product.id} onClick={() => { setSuggestionsOpen(false); addRecentSearch(product.title); router.push(`/products/${product.slug}` as Route); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-stone-50 dark:hover:bg-white/5"><span className="min-w-0"><strong className="block truncate">{product.title}</strong><span className="text-xs text-stone-500">{product.brand} · {product.category}</span></span><span className="ml-3 text-xs font-semibold">${product.price.toFixed(2)}</span></button>)}</div>}
         </form>
         <button onClick={() => setShowFilters(!showFilters)} className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-200 px-4 py-2 text-sm font-semibold lg:hidden">
           <SlidersHorizontal size={17} /> Filters {activeCount ? `(${activeCount})` : ""}
