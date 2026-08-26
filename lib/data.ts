@@ -2897,6 +2897,106 @@ export const products: Product[] = [
 
 
 
+const correctedSportNames: Record<string, string> = {
+  "sport-01": "Youth Football Protective Gear Set",
+  "sport-02": "Troy 9-Inch Sports Training Cones — Set of 10",
+  "sport-03": "Molten B7G5000 Competition Basketball",
+  "sport-04": "Nike Mercurial Zoom Pink Football Boots",
+  "sport-05": "Adidas X Speedportal White & Gold Football Boots",
+  "sport-06": "Body Power 8 kg Kettlebell",
+  "sport-07": "Reebok ZR7 Exercise Bike",
+  "sport-08": "Fit Five Push-Up Board with Resistance Bands",
+  "sport-09": "Hammer LP20 Folding Treadmill",
+  "sport-10": "Nike Black & White Shoe Bag",
+  "sport-11": "Adjustable Dumbbell and Barbell Set",
+  "sport-12": "Nike Black Slide Sandals",
+  "sport-13": "Dual-Wheel Ab Roller",
+  "sport-14": "Speed Training Hurdles — Set of 6",
+  "sport-15": "6-Inch Speed Training Hurdles — Set of 5",
+  "sport-16": "SRK Boxing Head Guard",
+  "sport-17": "Portable Adjustable Basketball Hoop",
+  "sport-18": "Nike Vapor Grip Goalkeeper Gloves",
+  "sport-19": "Nike Black Knit Training Gloves",
+  "sport-20": "Jordan Black Basketball Shorts",
+  "sport-21": "Adidas Predator Goalkeeper Gloves",
+  "sport-22": "Adidas Athletic Training Shoes",
+  "sport-24": "Adjustable Speed Skipping Rope",
+  "sport-25": "Costway 3-Level Adjustable Aerobic Step",
+  "sport-26": "Costway 3-Level Adjustable Aerobic Step",
+  "sport-27": "Nike Zoom Freak 2 Basketball Shoes",
+  "sport-28": "Nike Roshe Oreo Custom Women's Shoes",
+  "sport-29": "Diamond Mesh Training Bibs",
+  "sport-30": "Wilson Boston Celtics Basketball",
+  "sport-31": "Spalding Los Angeles Lakers Basketball",
+  "sport-32": "Chicago Bulls Basketball",
+  "sport-33": "Nike NBA Elite Crew Socks",
+  "sport-34": "Milwaukee Bucks Damian Lillard Jersey",
+  "sport-35": "Milwaukee Bucks Khris Middleton Uniform Set",
+  "sport-36": "FC Barcelona Home Football Jersey",
+  "sport-37": "Performance Knit Running Shoes",
+  "sport-40": "SA3030S Disc Training Cones — Set of 50",
+  "sport-41": "Wrist and Palm Support Brace",
+  "sport-45": "Compression Arm Sleeve",
+  "sport-46": "Lamicall Polarized UV400 Cycling Sunglasses",
+  "sport-47": "Men's Breathable High-Top Basketball Shoes",
+  "sport-49": "Viavito 2 kg Neoprene Dumbbells — Pair",
+  "sport-53": "Nike Ja 2 Stargazer Basketball Shoes",
+  "sport-54": "Nike KD 17 Metro Boomin Basketball Shoes",
+  "sport-57": "Nike Kobe 6 Protro Reverse Grinch Shoes",
+  "sport-58": "Adidas Anthony Edwards 1 Preloved Purple Shoes",
+  "sport-59": "Elastic Football Captain's Armband",
+  "sport-60": "Portable Ball Pump with Inflation Needle",
+  "sport-61": "5 kg PVC Hex Dumbbells — Pair",
+  "sport-62": "530 lb Rubber Dumbbell Set with Vertical Rack",
+  "sport-63": "Tennis Racket with Two Balls",
+  "sport-64": "Nike NBA One-Leg Compression Tights",
+  "sport-65": "Blue Mesh Team Training Bib",
+  "sport-66": "Blue Mesh Team Training Bib",
+  "sport-67": "Wilson NBA Authentic Outdoor Basketball",
+  "sport-68": "Adidas Yeezy Athletic Sneakers",
+};
+
+function describeSportProduct(title: string) {
+  const name = title.toLowerCase();
+  if (name.includes("football boots")) return `${title} with a studded outsole for traction, quick acceleration, and confident control on firm-ground pitches.`;
+  if (name.includes("basketball shoes") || name.includes("athletic sneakers") || name.includes("training shoes") || name.includes("running shoes") || name.includes("women's shoes")) return `${title} designed with supportive cushioning, a grippy outsole, and a comfortable athletic fit for active use.`;
+  if (name.includes("basketball") && !name.includes("shorts") && !name.includes("shoes") && !name.includes("hoop")) return `${title} with a textured cover for dependable grip, control, and recreational or training play.`;
+  if (name.includes("jersey") || name.includes("uniform")) return `${title} made with lightweight, breathable fabric for comfortable game-day wear and team support.`;
+  if (name.includes("dumbbell") || name.includes("kettlebell") || name.includes("barbell")) return `${title} built for strength training, controlled resistance work, and home or gym fitness routines.`;
+  if (name.includes("glove")) return `${title} offering a secure fit, dependable grip, and hand protection during training and competitive play.`;
+  if (name.includes("hurdle") || name.includes("cone")) return `${title} for agility drills, speed work, footwork practice, and organized team training sessions.`;
+  if (name.includes("training bib")) return `${title} in breathable mesh fabric for clearly identifying teams during practices, drills, and matches.`;
+  if (name.includes("sock")) return `${title} with cushioning and a supportive knit for court training, games, and comfortable everyday wear.`;
+  if (name.includes("shorts")) return `${title} made from lightweight, breathable fabric with an easy athletic fit for training and casual wear.`;
+  if (name.includes("treadmill")) return `${title} with a space-saving folding design for walking, jogging, and convenient indoor cardio workouts.`;
+  if (name.includes("exercise bike")) return `${title} with adjustable resistance, a workout display, and a stable frame for low-impact indoor cardio.`;
+  if (name.includes("push-up board")) return `${title} with guided hand positions and resistance bands for varied upper-body and full-body home workouts.`;
+  if (name.includes("ab roller")) return `${title} with a stable dual-wheel design and padded grips for controlled core-strengthening exercises.`;
+  if (name.includes("aerobic step")) return `${title} with three height settings and a non-slip surface for cardio, step, and lower-body workouts.`;
+  if (name.includes("skipping rope")) return `${title} with smooth rotation and adjustable length for cardio, coordination, and warm-up sessions.`;
+  if (name.includes("boxing head guard")) return `${title} with padded coverage and an adjustable fastening to help protect the head during sparring practice.`;
+  if (name.includes("basketball hoop")) return `${title} with an adjustable stand, backboard, net, and stable wheeled base for home practice and recreational play.`;
+  if (name.includes("shoe bag")) return `${title} with a zippered compartment and carry handle for keeping footwear organized on the way to training.`;
+  if (name.includes("slide sandals")) return `${title} with a cushioned footbed and easy slip-on design for recovery, poolside use, and everyday comfort.`;
+  if (name.includes("sunglasses")) return `${title} with a lightweight TR90 frame and polarized UV400 lenses for cycling, running, driving, and outdoor sport.`;
+  if (name.includes("support brace")) return `${title} designed to stabilize the wrist and palm while providing comfortable support during racket and ball sports.`;
+  if (name.includes("arm sleeve")) return `${title} with a close compression fit for support, coverage, and comfort during training and competition.`;
+  if (name.includes("headband") || name.includes("sweat band")) return `${title} made to absorb sweat and help keep hair and moisture away from the face during activity.`;
+  if (name.includes("shinguard")) return `${title} shaped for lightweight lower-leg protection and a secure fit during football training and matches.`;
+  if (name.includes("captain's armband")) return `${title} with a visible captain mark and stretch construction for a secure fit during football matches.`;
+  if (name.includes("ball pump")) return `${title} in a compact reusable design for inflating footballs, basketballs, volleyballs, and other sports balls.`;
+  if (name.includes("tennis racket")) return `${title} as a ready-to-play recreational set for practice sessions, beginners, and casual court games.`;
+  if (name.includes("compression tights")) return `${title} with stretch performance fabric for muscle support, coverage, and unrestricted court movement.`;
+  if (name.includes("protective gear")) return `${title} created to provide young players with essential coverage and confidence during football training.`;
+  return `${title} made for reliable performance, comfort, and regular sports training.`;
+}
+
+for (const product of products) {
+  if (product.category !== "Sport") continue;
+  product.title = correctedSportNames[product.id] ?? product.title;
+  product.description = describeSportProduct(product.title);
+}
+
 export const reviews: Review[] = [
   {
     id: "r1",

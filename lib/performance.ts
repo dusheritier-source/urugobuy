@@ -29,8 +29,8 @@ export const criticalResources = {
     { family: "Geist", weight: "700", display: "swap" },
   ],
   images: [
-    "/images/hero-bg.webp",
-    "/images/logo.webp",
+    "/images/category-fashion.jpg",
+    "/images/category-electronics.jpg",
   ],
 };
 

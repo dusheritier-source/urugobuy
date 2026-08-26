@@ -14,7 +14,7 @@ interface MetaTagsProps {
 export function MetaTags({
   title = "Urugo Buy | Premium shopping in Rwanda",
   description = "A premium e-commerce experience for modern shoppers in Rwanda.",
-  image = "/images/og-image.jpg",
+  image = "/images/category-fashion.jpg",
   url,
   type = "website",
 }: MetaTagsProps) {

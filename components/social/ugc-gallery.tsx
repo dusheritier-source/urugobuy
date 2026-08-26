@@ -25,7 +25,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
     const mockPosts: UGCPost[] = [
       {
         id: "1",
-        imageUrl: "/images/ugc/1.jpg",
+        imageUrl: "/images/products/sky-blue-pleated-set.jfif",
         customerName: "Sarah M.",
         productName: "Summer Dress",
         likes: 45,
@@ -34,7 +34,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "2",
-        imageUrl: "/images/ugc/2.jpg",
+        imageUrl: "/images/products/electronics-catalog/JBL high sond headphone.jpg",
         customerName: "Jean P.",
         productName: "Leather Bag",
         likes: 32,
@@ -43,7 +43,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "3",
-        imageUrl: "/images/ugc/3.jpg",
+        imageUrl: "/images/products/home-catalog/Cozy Reading Nook_ Lamp, Chair & Plant Glow.jpg",
         customerName: "Marie C.",
         productName: "Sneakers",
         likes: 67,
@@ -52,7 +52,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "4",
-        imageUrl: "/images/ugc/4.jpg",
+        imageUrl: "/images/products/beauty-catalog/604749056260656794.jpg",
         customerName: "Eric K.",
         productName: "Watch",
         likes: 28,
@@ -61,7 +61,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "5",
-        imageUrl: "/images/ugc/5.jpg",
+        imageUrl: "/images/products/sports-catalog/Fitness Gloves.jpg",
         customerName: "Alice N.",
         productName: "Sunglasses",
         likes: 54,
@@ -70,7 +70,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "6",
-        imageUrl: "/images/ugc/6.jpg",
+        imageUrl: "/images/products/island-print-summer-set.jfif",
         customerName: "David H.",
         productName: "Backpack",
         likes: 41,
@@ -79,7 +79,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "7",
-        imageUrl: "/images/ugc/7.jpg",
+        imageUrl: "/images/products/home-catalog/Interiors 247.jpg",
         customerName: "Grace L.",
         productName: "Earrings",
         likes: 38,
@@ -88,7 +88,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "8",
-        imageUrl: "/images/ugc/8.jpg",
+        imageUrl: "/images/products/sports-catalog/WILSON NBA Authentic Series Outdoor Basketballs.jpg",
         customerName: "Paul R.",
         productName: "Jacket",
         likes: 52,

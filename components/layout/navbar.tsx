@@ -199,8 +199,8 @@ export function Navbar() {
               U
             </div>
             <div>
-              <p className="text-lg font-semibold text-stone-900">Urugo Buy</p>
-              <p className="text-xs uppercase tracking-[0.32em] text-[#FF8C00]">Premium Market</p>
+              <p className="text-lg font-semibold text-stone-900 dark:text-white">Urugo Buy</p>
+              <p className="text-xs uppercase tracking-[0.32em] text-[#c86500] dark:text-[#ff9f2e]">Premium Market</p>
             </div>
           </Link>
           <nav className="hidden items-center gap-6 lg:flex">
