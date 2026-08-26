@@ -27,13 +27,14 @@ export function HeroSection() {
               Browse products <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="mt-8 flex flex-col gap-3 rounded-[24px] border border-white/20 bg-white/10 p-4 backdrop-blur sm:flex-row sm:items-center">
+          <form action="/products" method="get" role="search" className="mt-8 flex flex-col gap-3 rounded-[24px] border border-white/20 bg-white/10 p-4 backdrop-blur sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
-              <Input placeholder="Search for products" className="pl-11 text-stone-700" />
+              <label htmlFor="hero-search" className="sr-only">Search products</label>
+              <Input id="hero-search" name="q" type="search" placeholder="Search products, brands, and categories" className="pl-11 text-stone-700" />
             </div>
-            <Button className="bg-[#FF8C00] hover:bg-[#e67e00]">Find deals</Button>
-          </div>
+            <Button type="submit" className="bg-[#FF8C00] hover:bg-[#e67e00]">Search products</Button>
+          </form>
         </div>
         <div className="rounded-[32px] border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur">
           <div className="rounded-[24px] bg-white p-4 text-stone-800">
