@@ -22,7 +22,7 @@ export function InstagramFeed({ username = "urugobuy", limit = 6 }: { username?:
     const mockPosts: InstagramPost[] = [
       {
         id: "1",
-        imageUrl: "/images/products/abstract-orange-summer-set.jfif",
+        imageUrl: "/images/products/abstract-orange-summer-set.jpg",
         caption: "New arrivals! Check out our latest collection",
         likes: 234,
         link: "https://instagram.com/p/1",

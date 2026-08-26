@@ -70,7 +70,7 @@ export function UGCGallery({ limit = 8 }: { limit?: number }) {
       },
       {
         id: "6",
-        imageUrl: "/images/products/island-print-summer-set.jfif",
+        imageUrl: "/images/products/island-print-summer-set.jpg",
         customerName: "David H.",
         productName: "Backpack",
         likes: 41,
