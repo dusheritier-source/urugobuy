@@ -2997,6 +2997,40 @@ for (const product of products) {
   product.description = describeSportProduct(product.title);
 }
 
+// These legacy Unsplash photo IDs now return HTTP 404. Remove failed gallery
+// entries, then remove a product entirely when it has no working image left.
+const unavailableRemotePhotoIds = [
+  "photo-1511632765486-a01980e01a1b",
+  "photo-1512499617640-c2f999c38d5b",
+  "photo-1518441902117-f0a6b1b8c6b5",
+  "photo-1519710887722-0f4cecd5c1d9",
+  "photo-1520975958225-1b62d0c3f5dd",
+  "photo-1524594154908-edd264f78f0a",
+  "photo-1528701800489-20be2c7ad1c0",
+  "photo-1540932239986-3019399165b6",
+  "photo-1556228724-4b0f2f8c8b2c",
+  "photo-1562876959-5d5c8c2b4f2f",
+  "photo-1580894908361-35a3aaf1b5e6",
+  "photo-1583847817129-6f3dcd0f3e3f",
+  "photo-1584309174030-8e1b6b0cc8d0",
+  "photo-1600180758895-7f7f8d7a5b3c",
+  "photo-1604909053198-0b46a0e8f8a5",
+  "photo-1611930022073-a3f3f2f0a6f8",
+  "photo-1612810436541-337f8fca8b3f",
+] as const;
+
+for (let index = products.length - 1; index >= 0; index -= 1) {
+  const product = products[index];
+  product.images = product.images.filter(
+    (image) => !unavailableRemotePhotoIds.some((photoId) => image.includes(photoId)),
+  );
+  const hasCompleteCatalogContent =
+    product.title.trim().length > 0 &&
+    product.description.trim().length > 0 &&
+    product.images.length > 0;
+  if (!hasCompleteCatalogContent) products.splice(index, 1);
+}
+
 export const reviews: Review[] = [
   {
     id: "r1",
