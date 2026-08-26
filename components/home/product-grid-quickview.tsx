@@ -7,15 +7,12 @@ import type { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { QuickViewModal } from "@/components/ui/quick-view-modal";
 import { useCartStore } from "@/store/cart-store";
-import { useLocale } from "@/components/locale/locale-context";
 
 
 export function ProductGridQuickView({
   products,
-  title,
 }: {
   products: Product[];
-  title: string;
 }) {
   const [selected, setSelected] = useState<Product | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -44,26 +41,7 @@ export function ProductGridQuickView({
   return (
     <>
       {modal}
-      <section className="space-y-5">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#FF8C00]">
-              {title}
-            </p>
-            <h2 className="text-2xl font-semibold text-stone-900">
-              Curated picks for modern living
-            </h2>
-          </div>
-          <a
-            href={`/${useLocale().locale}/products`}
-            className="text-sm font-semibold text-[#8B4513] hover:underline"
-          >
-            View all
-          </a>
-
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {products.map((product) => (
             <article
               key={product.id}
@@ -134,8 +112,7 @@ export function ProductGridQuickView({
               </div>
             </article>
           ))}
-        </div>
-      </section>
+      </div>
     </>
   );
 }

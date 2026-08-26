@@ -1,8 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Heart, Star } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Product } from "@/types";
-import { Button } from "@/components/ui/button";
 import { ProductGridQuickView } from "./product-grid-quickview";
 
 export function ProductGrid({ products, title }: { products: Product[]; title: string }) {
@@ -17,7 +15,7 @@ export function ProductGrid({ products, title }: { products: Product[]; title: s
           View all <ArrowRight className="ml-1 inline" size={16} />
         </Link>
       </div>
-      <ProductGridQuickView products={products} title={title} />
+      <ProductGridQuickView products={products} />
     </section>
   );
 }
