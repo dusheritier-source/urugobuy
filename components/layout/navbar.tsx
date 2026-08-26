@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
@@ -70,6 +70,9 @@ export function Navbar() {
   const [isPromoDismissed, setIsPromoDismissed] = useState(false);
   const [isNavHidden, setIsNavHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
+  const notificationsRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
@@ -80,6 +83,14 @@ export function Navbar() {
     } catch {
       // ignore
     }
+  }, []);
+
+  useEffect(() => {
+    const closeNotifications = (event: PointerEvent) => {
+      if (!notificationsRef.current?.contains(event.target as Node)) setIsNotificationsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeNotifications);
+    return () => document.removeEventListener("pointerdown", closeNotifications);
   }, []);
 
   useEffect(() => {
@@ -214,9 +225,16 @@ href={link.href}
             <Link href={{ pathname: "/profile/wishlist" }} aria-label="Wishlist" className="rounded-full border border-stone-200 p-2.5 text-stone-600 transition hover:border-[#8B4513] hover:text-[#8B4513] dark:border-white/10 dark:text-stone-300 dark:hover:border-[#8B4513] dark:hover:text-[#8B4513]">
               <Heart size={18} />
             </Link>
-            <button className="rounded-full border border-stone-200 p-2.5 text-stone-600 transition hover:border-[#8B4513] hover:text-[#8B4513] dark:border-white/10 dark:text-stone-300 dark:hover:border-[#8B4513] dark:hover:text-[#8B4513]">
-              <Bell size={18} />
-            </button>
+            <div ref={notificationsRef} className="relative">
+              <button type="button" aria-label="Notifications" aria-expanded={isNotificationsOpen} onClick={() => { setIsNotificationsOpen((open) => !open); setHasUnreadNotification(false); }} className="relative rounded-full border border-stone-200 p-2.5 text-stone-600 transition hover:border-[#8B4513] hover:text-[#8B4513] dark:border-white/10 dark:text-stone-300 dark:hover:border-[#8B4513] dark:hover:text-[#8B4513]">
+                <Bell size={18} />
+                {hasUnreadNotification && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#FF8C00] ring-2 ring-white" />}
+              </button>
+              {isNotificationsOpen && <div className="absolute right-0 top-12 z-[70] w-80 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl dark:border-white/10 dark:bg-slate-950">
+                <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3 dark:border-white/10"><div><p className="font-semibold text-stone-900 dark:text-white">Notifications</p><p className="text-xs text-stone-500">Your latest account updates</p></div><button type="button" onClick={() => setIsNotificationsOpen(false)} aria-label="Close notifications" className="rounded-full p-1 text-stone-400 hover:bg-stone-100"><X size={16} /></button></div>
+                {user ? <div className="p-2"><Link href="/profile" onClick={() => setIsNotificationsOpen(false)} className="flex gap-3 rounded-xl p-3 hover:bg-[#fff8f1] dark:hover:bg-white/5"><span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#FF8C00]" /><span><strong className="block text-sm text-stone-900 dark:text-white">Welcome to Urugo Buy</strong><span className="mt-1 block text-xs leading-5 text-stone-500">Your account is ready. Order and delivery updates will appear here.</span></span></Link></div> : <div className="p-6 text-center"><Bell className="mx-auto text-stone-300" size={28} /><p className="mt-3 text-sm font-semibold text-stone-800 dark:text-white">Sign in for notifications</p><p className="mt-1 text-xs text-stone-500">Get order, delivery, and offer updates.</p><Link href="/login" onClick={() => setIsNotificationsOpen(false)} className="mt-4 inline-flex rounded-full bg-[#8B4513] px-4 py-2 text-xs font-semibold text-white">Sign in</Link></div>}
+              </div>}
+            </div>
             <Link href="/cart" className="rounded-full border border-stone-200 p-2.5 text-stone-600 transition hover:border-[#8B4513] hover:text-[#8B4513] dark:border-white/10 dark:text-stone-300 dark:hover:border-[#8B4513] dark:hover:text-[#8B4513]">
               <ShoppingBag size={18} />
             </Link>
