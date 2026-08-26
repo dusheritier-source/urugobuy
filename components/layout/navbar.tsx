@@ -169,7 +169,7 @@ export function Navbar() {
 
       <header
         className={cn(
-          "fixed left-0 right-0 z-50 border-b border-stone-200/70 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70",
+          "sticky top-0 z-50 border-b border-stone-200/70 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/85",
           "transform-gpu transition-transform duration-200 ease-out",
           "will-change-transform",
           isNavHidden ? "-translate-y-[140%]" : "translate-y-0"
