@@ -4,8 +4,8 @@ import { Globe, Mail, Phone, Sparkles } from "lucide-react";
 export function Footer() {
   return (
     <footer className="border-t border-stone-200 bg-[#fffaf4]">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
-        <div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-10 sm:px-6 lg:grid-cols-4 lg:px-8 lg:py-12">
+        <div className="col-span-2 lg:col-span-1">
           <p className="text-lg font-semibold text-stone-900">Urugo Buy</p>
           <p className="mt-3 text-sm text-stone-600">A premium digital marketplace designed for modern shoppers in Rwanda and beyond.</p>
         </div>

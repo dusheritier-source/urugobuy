@@ -10,6 +10,7 @@ import { ProductsPageGridQuickView } from "./product-grid-quickview";
 import { readCatalog } from "@/lib/catalog-storage";
 import { searchProducts } from "@/lib/search";
 import { useUIStore } from "@/store/ui-store";
+import { useLocale } from "@/components/locale/locale-context";
 
 type SortKey = "featured" | "newest" | "rating" | "price-asc" | "price-desc";
 
@@ -17,6 +18,7 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
   const router = useRouter();
   const pathname = usePathname();
   const addRecentSearch = useUIStore((state) => state.addRecentSearch);
+  const { locale } = useLocale();
   const searchFormRef = useRef<HTMLFormElement>(null);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [query, setQuery] = useState(initialQuery);
@@ -131,7 +133,7 @@ export function ProductsSearchResults({ allProducts, initialCategory = "", initi
           <Input id="catalog-search" autoComplete="off" aria-autocomplete="list" aria-controls="catalog-suggestions" aria-expanded={suggestionsOpen && suggestions.length > 0} placeholder="Search products, brands, categories, colors…" className="pl-11 pr-24" value={query} onFocus={() => setSuggestionsOpen(true)} onChange={(e) => { setQuery(e.target.value); setSuggestionsOpen(true); setPage(1); }} />
           {query && <button type="button" aria-label="Clear search" onClick={() => commitSearch("")} className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-stone-400 hover:bg-stone-100"><X size={15} /></button>}
           <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#8B4513] px-3 py-1.5 text-xs font-semibold text-white">Search</button>
-          {suggestionsOpen && suggestions.length > 0 && <div id="catalog-suggestions" role="listbox" className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-2xl border border-stone-200 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-slate-950"><div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Top matches</div>{suggestions.map((product) => <button role="option" aria-selected="false" type="button" key={product.id} onClick={() => { setSuggestionsOpen(false); addRecentSearch(product.title); router.push(`/products/${product.slug}` as Route); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-stone-50 dark:hover:bg-white/5"><span className="min-w-0"><strong className="block truncate">{product.title}</strong><span className="text-xs text-stone-500">{product.brand} · {product.category}</span></span><span className="ml-3 text-xs font-semibold">${product.price.toFixed(2)}</span></button>)}</div>}
+          {suggestionsOpen && suggestions.length > 0 && <div id="catalog-suggestions" role="listbox" className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-2xl border border-stone-200 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-slate-950"><div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-stone-400">Top matches</div>{suggestions.map((product) => <button role="option" aria-selected="false" type="button" key={product.id} onClick={() => { setSuggestionsOpen(false); addRecentSearch(product.title); router.push(`/${locale}/products/${product.slug}` as Route); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-stone-50 dark:hover:bg-white/5"><span className="min-w-0"><strong className="block truncate">{product.title}</strong><span className="text-xs text-stone-500">{product.brand} · {product.category}</span></span><span className="ml-3 text-xs font-semibold">${product.price.toFixed(2)}</span></button>)}</div>}
         </form>
         <button onClick={() => setShowFilters(!showFilters)} className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-200 px-4 py-2 text-sm font-semibold lg:hidden">
           <SlidersHorizontal size={17} /> Filters {activeCount ? `(${activeCount})` : ""}

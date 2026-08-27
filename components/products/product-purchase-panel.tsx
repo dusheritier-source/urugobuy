@@ -14,7 +14,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const addItem = useCartStore((state) => state.addItem);
-  const saved = useWishlistStore((state) => state.items.some((item) => item.id === product.id));
+  const saved = useWishlistStore((state) => (Array.isArray(state.items) ? state.items : []).some((item) => item.id === product.id));
   const toggleWishlist = useWishlistStore((state) => state.toggle);
 
   const addToCart = () => {

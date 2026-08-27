@@ -7,9 +7,9 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+    <main className="mx-auto flex max-w-7xl flex-col gap-7 px-3 py-4 sm:gap-8 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
       <HeroSection />
-      <section className="grid gap-4 rounded-[32px] border border-stone-200/70 bg-white p-6 shadow-sm md:grid-cols-3">
+      <section className="grid grid-cols-3 gap-2 rounded-[24px] border border-[#eadfd4] bg-[var(--mobile-surface)] p-3 shadow-sm sm:gap-4 sm:rounded-[32px] sm:border-stone-200/70 sm:bg-white sm:p-6">
         {[
           { title: "Fast delivery", description: "Ships within 24 hours across Rwanda.", icon: Truck },
           { title: "Secure checkout", description: "Protected payments and trusted support.", icon: ShieldCheck },
@@ -17,12 +17,12 @@ export default function Home() {
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.title} className="rounded-[24px] bg-[#fff8f1] p-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#8B4513] shadow-sm">
+            <div key={item.title} className="rounded-2xl bg-[var(--mobile-surface-muted)] p-2.5 text-center sm:rounded-[24px] sm:bg-[#fff8f1] sm:p-4 sm:text-left">
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#8B4513] shadow-sm sm:mx-0 sm:h-11 sm:w-11">
                 <Icon size={18} />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-stone-900">{item.title}</h3>
-              <p className="mt-2 text-sm text-stone-600">{item.description}</p>
+              <h3 className="mt-2 text-xs font-semibold leading-tight text-stone-900 sm:mt-4 sm:text-lg">{item.title}</h3>
+              <p className="mt-2 hidden text-sm text-stone-600 sm:block">{item.description}</p>
             </div>
           );
         })}

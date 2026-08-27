@@ -41,11 +41,11 @@ export function ProductGridQuickView({
   return (
     <>
       {modal}
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3 min-[480px]:grid-cols-2 md:gap-5 xl:grid-cols-3">
           {products.map((product) => (
             <article
               key={product.id}
-              className="group overflow-hidden rounded-[28px] border border-stone-200/70 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.35)]"
+              className="group overflow-hidden rounded-[22px] border border-[#eadfd4] bg-[var(--mobile-surface)] shadow-[0_20px_55px_-40px_rgba(113,55,15,0.4)] sm:rounded-[28px] sm:border-stone-200/70 sm:bg-white sm:shadow-[0_30px_90px_-45px_rgba(15,23,42,0.35)]"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <button
@@ -65,16 +65,16 @@ export function ProductGridQuickView({
                 <button
                   type="button"
                   onClick={() => open(product)}
-                  className="absolute right-4 top-4 rounded-full bg-white/90 p-2 text-stone-700 shadow transition hover:border-[#8B4513] hover:text-[#8B4513]"
+                  className="absolute right-2.5 top-2.5 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-stone-700 shadow transition hover:border-[#8B4513] hover:text-[#8B4513] sm:right-4 sm:top-4"
                   aria-label="Open quick view"
                 >
                   <Heart size={18} />
                 </button>
               </div>
 
-              <div className="space-y-3 p-5">
+              <div className="space-y-3 p-3.5 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-[#fff8f1] px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#8B4513]">
+                    <span className="max-w-[70%] truncate rounded-full bg-[#fff8f1] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8B4513] sm:px-3 sm:text-xs sm:tracking-[0.25em]">
                     {product.category}
                   </span>
                   <div className="flex items-center gap-1 text-sm text-amber-500">
@@ -86,7 +86,7 @@ export function ProductGridQuickView({
                   onClick={() => open(product)}
                   className="block text-left"
                 >
-                  <h3 className="text-lg font-semibold text-stone-900">
+                  <h3 className="line-clamp-2 text-base font-semibold leading-snug text-stone-900 sm:text-lg">
                     {product.title}
                   </h3>
                   <p className="mt-2 line-clamp-2 text-sm text-stone-600">
@@ -94,14 +94,14 @@ export function ProductGridQuickView({
                   </p>
                 </button>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-xl font-semibold text-stone-900">
                       ${product.price}
                     </p>
                     <p className="text-sm text-stone-500">{product.stock} left</p>
                   </div>
-                  <Button
+                  <Button className="min-h-11 w-full sm:w-auto"
                     variant="outline"
                     disabled={product.stock <= 0}
                     onClick={() => addItem(product, 1)}

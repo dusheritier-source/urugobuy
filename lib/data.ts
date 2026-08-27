@@ -2148,7 +2148,7 @@ export const products: Product[] = [
   {
     id: "sport-25",
     title: "Costway Stepper D'aérobic Hauteur Réglable 3 Niveaux 10 15 20cm Surface Antidérapant Charge 250kg",
-    slug: "costway-stepper-d-a-robic-hauteur-r-glable-3-niveaux-10-15-20cm-surface-antid-rapant-charge-250kg",
+    slug: "costway-stepper-adjustable-aerobic-platform-blue",
     description: "Premium sports gear built for performance and comfort.",
     category: "Sport",
     brand: "Urugo Sport",
@@ -2828,7 +2828,7 @@ export const products: Product[] = [
   {
     id: "sport-65",
     title: "Swipe To See More Colors Available In All Colors As Seen Call Or Whatsapp On 0256608914",
-    slug: "swipe-to-see-more-colors-available-in-all-colors-as-seen-call-or-whatsapp-on-0256608914",
+    slug: "multi-color-sportswear-set-variant-two",
     description: "Premium sports gear built for performance and comfort.",
     category: "Sport",
     brand: "Urugo Sport",

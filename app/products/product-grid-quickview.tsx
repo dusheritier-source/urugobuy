@@ -3,15 +3,18 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { Heart, Star } from "lucide-react";
 import type { Product } from "@/types";
 import { QuickViewModal } from "@/components/ui/quick-view-modal";
 import { useCartStore } from "@/store/cart-store";
+import { useLocale } from "@/components/locale/locale-context";
 
 export function ProductsPageGridQuickView({ products }: { products: Product[] }) {
   const [selected, setSelected] = useState<Product | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const { locale } = useLocale();
 
   const open = (p: Product) => {
     setSelected(p);
@@ -95,7 +98,7 @@ export function ProductsPageGridQuickView({ products }: { products: Product[] })
                 <div className="flex items-center gap-1 text-sm text-amber-500">
                   <Star size={14} fill="currentColor" /> {product.rating}
                 </div>
-                <Link href={`/products/${product.slug}`} className="text-sm font-semibold text-[#8B4513] hover:underline">
+                <Link href={`/${locale}/products/${product.slug}` as Route} className="text-sm font-semibold text-[#8B4513] hover:underline">
                   Details →
                 </Link>
               </div>

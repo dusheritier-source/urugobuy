@@ -9,6 +9,9 @@ import type { Product } from "@/types";
 import { useCartStore } from "@/store/cart-store";
 import { BackInStockButton } from "@/components/products/back-in-stock-button";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import type { Route } from "next";
+import { useLocale } from "@/components/locale/locale-context";
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -19,6 +22,7 @@ interface QuickViewModalProps {
 export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
+  const { locale } = useLocale();
 
   const computed = useMemo(() => {
     if (!product) return null;
@@ -148,7 +152,14 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             </div>
           </div>
 
-          <div className="mt-6 flex gap-3">
+          <Link
+            href={`/${locale}/products/${product.slug}` as Route}
+            onClick={onClose}
+            className="mb-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#8B4513] px-5 py-2.5 text-sm font-semibold text-[#8B4513] transition hover:bg-[#fff8f1]"
+          >
+            View full product details
+          </Link>
+          <div className="flex gap-3">
             {product.stock > 0 ? <button
               type="button"
               onClick={() => { const result = addItem(product, 1); if (result.accepted) toast.success(`${product.title} added to cart`); }}

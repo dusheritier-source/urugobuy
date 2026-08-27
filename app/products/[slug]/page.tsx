@@ -28,7 +28,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <Link href="/products" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#8B4513]">
+      <Link href="/products" className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#8B4513]">
         <ArrowLeft size={16} /> Back to products
       </Link>
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">

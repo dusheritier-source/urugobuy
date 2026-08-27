@@ -180,7 +180,7 @@ export function Navbar() {
 
       <header
         className={cn(
-          "sticky top-0 z-50 border-b border-stone-200/70 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/85",
+          "sticky top-0 z-50 border-b border-[#eadfd4] bg-[var(--mobile-surface)]/95 backdrop-blur-xl md:border-stone-200/70 md:bg-white/90 dark:border-white/10 dark:bg-slate-950/85",
           "transform-gpu transition-transform duration-200 ease-out",
           "will-change-transform",
           isNavHidden ? "-translate-y-[140%]" : "translate-y-0"
@@ -188,19 +188,19 @@ export function Navbar() {
       >
         <div
           className={cn(
-            "mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8",
+            "mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8",
             isNavHidden && "translate-y-[-140%]"
           )}
         >
 
 
-<Link href={links[0].href} className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#8B4513] text-lg font-semibold text-white">
+<Link href={links[0].href} className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--mobile-brand)] text-base font-bold text-white shadow-lg shadow-orange-900/15 sm:h-11 sm:w-11 sm:rounded-full sm:bg-gradient-to-br sm:from-[#8B4513] sm:to-[#FF8C00] sm:text-lg">
               U
             </div>
             <div>
-              <p className="text-lg font-semibold text-stone-900 dark:text-white">Urugo Buy</p>
-              <p className="text-xs uppercase tracking-[0.32em] text-[#c86500] dark:text-[#ff9f2e]">Premium Market</p>
+              <p className="text-base font-semibold leading-tight text-stone-900 dark:text-white sm:text-lg">Urugo Buy</p>
+              <p className="hidden text-xs uppercase tracking-[0.32em] text-[#c86500] dark:text-[#ff9f2e] min-[370px]:block">Premium Market</p>
             </div>
           </Link>
           <nav className="hidden items-center gap-6 lg:flex">
@@ -273,9 +273,12 @@ href={link.href}
               </>
             )}
           </div>
-          <button onClick={() => setIsMobileOpen(!isMobileOpen)} aria-expanded={isMobileOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation" className="rounded-full border border-stone-200 p-2.5 text-stone-600 lg:hidden dark:border-white/10 dark:text-stone-300">
-            {isMobileOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <Link href={toLocaleHref(locale, "/products")} aria-label="Search products" className="grid h-10 w-10 place-items-center rounded-full bg-[var(--mobile-surface-muted)] text-[var(--mobile-brand)]"><Search size={19} /></Link>
+            <button onClick={() => setIsMobileOpen(!isMobileOpen)} aria-expanded={isMobileOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation" className="grid h-10 w-10 place-items-center rounded-full border border-stone-200 text-stone-600 lg:hidden dark:border-white/10 dark:text-stone-300">
+              {isMobileOpen ? <X size={19} /> : <Menu size={19} />}
+            </button>
+          </div>
 
         </div>
         {isMobileOpen && (
