@@ -1,7 +1,7 @@
 import { ProductsSearchResults } from "./products-search-results";
 import { products } from "@/lib/data";
 
-export default async function ProductsPage({ searchParams }: { searchParams?: Promise<{ category?: string; q?: string }> } = {}) {
+export default async function ProductsPage({ searchParams }: { searchParams?: Promise<{ category?: string; q?: string }> }) {
   const { category = "", q = "" } = searchParams ? await searchParams : {};
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">

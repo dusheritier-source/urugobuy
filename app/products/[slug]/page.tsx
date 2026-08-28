@@ -7,6 +7,7 @@ import { ProductPurchasePanel } from "@/components/products/product-purchase-pan
 import type { Metadata } from "next";
 import { CustomerReviews } from "@/components/products/customer-reviews";
 import { StructuredData } from "@/components/ui/seo/structured-data";
+import type { Locale } from "@/lib/locale";
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return product ? { title: `${product.title} | Urugo Buy`, description: product.description, openGraph: { images: product.images.slice(0, 1) } } : {};
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string; locale?: Locale }> }) {
+  const { slug, locale } = await params;
   const product = products.find((entry) => entry.slug === slug);
 
   if (!product) {
@@ -28,18 +29,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <Link href="/products" className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#8B4513]">
+      <Link href={locale ? `/${locale}/products` : "/products"} className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#8B4513]">
         <ArrowLeft size={16} /> Back to products
       </Link>
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-4">
           <div className="relative aspect-[4/3] overflow-hidden rounded-[32px] border border-stone-200/70 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.35)]">
-            <Image src={product.images[0]} alt={product.title} fill className="object-cover" />
+            <Image src={product.images[0]} alt={product.title} fill unoptimized className="object-cover" />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {product.images.slice(1).map((image) => (
               <div key={image} className="relative aspect-[4/3] overflow-hidden rounded-[24px] border border-stone-200/70 bg-white">
-                <Image src={image} alt={`${product.title} detail`} fill className="object-cover" />
+                <Image src={image} alt={`${product.title} detail`} fill unoptimized className="object-cover" />
               </div>
             ))}
           </div>
@@ -79,7 +80,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </div>
       <CustomerReviews productId={product.id} fallbackRating={product.rating} />
       <StructuredData type="product" data={{ name: product.title, description: product.description, image: product.images[0], price: product.price * (1 - product.discount / 100), currency: "USD", availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", brand: product.brand, sku: product.id }} />
-      <StructuredData type="breadcrumb" data={[{ name: "Products", url: "/products" }, { name: product.title, url: `/products/${product.slug}` }]} />
+      <StructuredData type="breadcrumb" data={[{ name: "Products", url: locale ? `/${locale}/products` : "/products" }, { name: product.title, url: locale ? `/${locale}/products/${product.slug}` : `/products/${product.slug}` }]} />
     </main>
   );
 }

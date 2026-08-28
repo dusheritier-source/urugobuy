@@ -49,7 +49,7 @@ export function ProductsPageGridQuickView({ products }: { products: Product[] })
               aria-label={`Quick view: ${product.title}`}
             >
               <div className="relative aspect-[4/3]">
-                <Image src={product.images[0]} alt={product.title} fill className="object-cover" />
+                <Image src={product.images[0]} alt={product.title} fill unoptimized className="object-cover" />
               </div>
             </button>
 
