@@ -1,7 +1,10 @@
 import { ProductsSearchResults } from "./products-search-results";
-import { products } from "@/lib/data";
+import { publishedProducts } from "@/lib/server/catalog";
+
+export const revalidate = 60;
 
 export default async function ProductsPage({ searchParams }: { searchParams?: Promise<{ category?: string; q?: string }> }) {
+  const products = await publishedProducts();
   const { category = "", q = "" } = searchParams ? await searchParams : {};
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">

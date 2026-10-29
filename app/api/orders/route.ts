@@ -1,3 +1,5 @@
+import { invalidateCatalog } from "@/lib/server/catalog";
+import { orderTotals } from "@/lib/order-pricing";
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import type { DocumentReference } from "firebase-admin/firestore";
@@ -84,10 +86,7 @@ export async function POST(request: Request) {
         promotionRef = promotionDoc.ref;
       }
 
-      const discountedSubtotal = money(subtotal - discount);
-      const shipping = input.shippingMethod === "express" ? 30 : input.shippingMethod === "pickup" || discountedSubtotal >= 100 ? 0 : 15;
-      const tax = money(discountedSubtotal * 0.18);
-      const total = money(discountedSubtotal + shipping + tax);
+      const { shipping, tax, total } = orderTotals(lines, input.shippingMethod, discount);
       const now = new Date().toISOString();
       const order = {
         id: orderRef.id,
@@ -125,6 +124,7 @@ export async function POST(request: Request) {
       return order;
     });
 
+    invalidateCatalog();
     return NextResponse.json({ order: result }, { status: "duplicate" in result ? 200 : 201 });
   } catch (error) {
     return apiError(error);

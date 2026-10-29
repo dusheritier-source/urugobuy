@@ -1,4 +1,5 @@
 "use client";
+import { sellingPrice } from "@/lib/product-pricing";
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
@@ -97,7 +98,7 @@ export function ProductGridQuickView({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-xl font-semibold text-stone-900">
-                      ${product.price}
+                      ${sellingPrice(product).toFixed(2)}
                     </p>
                     <p className="text-sm text-stone-500">{product.stock} left</p>
                   </div>

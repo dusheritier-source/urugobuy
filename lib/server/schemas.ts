@@ -2,21 +2,40 @@ import { z } from "zod";
 
 const shortText = z.string().trim().min(1).max(200);
 const isoDate = z.string().datetime();
+export const productTranslationsSchema = z.partialRecord(
+  z.enum(["en", "rw", "fr", "zh", "sw", "ar", "es", "pt", "hi", "de"]),
+  z.object({
+    title: z.string().trim().max(200).optional(),
+    description: z.string().trim().max(10_000).optional(),
+  }),
+).optional();
 
 export const productSchema = z.object({
   title: shortText,
   slug: z.string().trim().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   description: z.string().trim().min(1).max(10_000),
+  translations: productTranslationsSchema,
   category: shortText,
   brand: shortText,
   price: z.number().finite().nonnegative().max(100_000_000),
   discount: z.number().finite().min(0).max(100),
-  images: z.array(z.string().url()).min(1).max(12),
+  images: z.array(z.string().max(2048).refine((value) => {
+    if (value.startsWith("/images/")) {
+      try { const decoded = decodeURIComponent(value); return !decoded.includes("\\") && !decoded.split("/").some((part) => part === ".." || part === "."); } catch { return false; }
+    }
+    try { return new URL(value).protocol === "https:"; } catch { return false; }
+  }, "Use a local catalog image or an HTTPS image URL")).min(1).max(12),
   rating: z.number().finite().min(0).max(5).default(0),
   stock: z.number().int().min(0).max(1_000_000),
   colors: z.array(shortText).max(50),
   sizes: z.array(shortText).max(50),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
+});
+
+// PATCH must not apply creation defaults: a price edit must keep status/rating.
+export const productUpdateSchema = productSchema.omit({ rating: true, status: true }).partial().extend({
+  rating: z.number().finite().min(0).max(5).optional(),
+  status: z.enum(["draft", "published", "archived"]).optional(),
 });
 
 export const profileSchema = z.object({

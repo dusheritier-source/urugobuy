@@ -16,6 +16,7 @@ interface UIStore {
   // Recently viewed products
   recentlyViewed: string[];
   addToRecentlyViewed: (productId: string) => void;
+  clearRecentlyViewed: () => void;
 
   // Comparison list
   compareList: string[];
@@ -55,13 +56,15 @@ export const useUIStore = create<UIStore>()(
       recentlyViewed: [],
       addToRecentlyViewed: (productId) =>
         set((state) => {
-          const filtered = state.recentlyViewed.filter((id) => id !== productId);
+          const filtered = (Array.isArray(state.recentlyViewed) ? state.recentlyViewed : []).filter((id) => typeof id === "string" && id !== productId);
           return {
             recentlyViewed: [productId, ...filtered].slice(0, 10),
           };
         }),
 
       // Comparison list
+      clearRecentlyViewed: () => set({ recentlyViewed: [] }),
+
       compareList: [],
       addToCompare: (productId) =>
         set((state) => {

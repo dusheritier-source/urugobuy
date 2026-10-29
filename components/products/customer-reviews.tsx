@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { CheckCircle2, Star, ThumbsUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 
 export function CustomerReviews({ productId, fallbackRating }: { productId: string; fallbackRating: number }) {
   const { user } = useAuth(); const [rating, setRating] = useState(5); const [title, setTitle] = useState(""); const [comment, setComment] = useState("");
-  const reviews = useReviewStore((state) => (Array.isArray(state.reviews) ? state.reviews : []).filter((r) => r.productId === productId && r.status === "published")); const add = useReviewStore((state) => state.add); const helpful = useReviewStore((state) => state.helpful);
+  const allReviews = useReviewStore((state) => state.reviews);
+  const reviews = useMemo(() => (Array.isArray(allReviews) ? allReviews : []).filter((review) => review.productId === productId && review.status === "published"), [allReviews, productId]); const add = useReviewStore((state) => state.add); const helpful = useReviewStore((state) => state.helpful);
   const verified = useOrderStore((state) => (Array.isArray(state.orders) ? state.orders : []).some((order) => order.customerId === user?.uid && Array.isArray(order.lines) && order.lines.some((line) => line.id === productId)));
   const average = reviews.length ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : fallbackRating;
   const submit = (event: FormEvent) => { event.preventDefault(); if (!user) return toast.error("Sign in to leave a review"); add({ id: crypto.randomUUID(), productId, author: user.displayName || user.email || "Customer", rating, title, comment, createdAt: new Date().toISOString(), verified, status: "pending", helpful: 0 }); setTitle(""); setComment(""); toast.success("Review submitted for moderation"); };

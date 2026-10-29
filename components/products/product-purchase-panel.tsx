@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { BackInStockButton } from "@/components/products/back-in-stock-button";
+import { PriceAlertButton } from "@/components/products/price-alert-button";
+import { useLocale } from "@/components/locale/locale-context";
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
+  const { t } = useLocale();
   const [color, setColor] = useState(product.colors[0] ?? "");
   const [size, setSize] = useState(product.sizes[0] ?? "");
   const [quantity, setQuantity] = useState(1);
@@ -19,29 +22,30 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
 
   const addToCart = () => {
     const result = addItem(product, quantity);
-    if (result.accepted > 0) toast.success(`${result.accepted} × ${product.title} added to cart`);
+    if (result.accepted > 0) toast.success(`${result.accepted} × ${product.title} ${t("addedToCart")}`);
   };
 
   const share = async () => {
     const url = window.location.href;
     if (navigator.share) await navigator.share({ title: product.title, url });
-    else { await navigator.clipboard.writeText(url); toast.success("Product link copied"); }
+    else { await navigator.clipboard.writeText(url); toast.success(t("productLinkCopied")); }
   };
 
   return (
     <div className="mt-7 space-y-6">
-      {product.colors.length > 0 && <fieldset><legend className="mb-3 text-sm font-semibold">Color: <span className="font-normal text-stone-500">{color}</span></legend><div className="flex flex-wrap gap-2">{product.colors.map((item) => <button key={item} type="button" onClick={() => setColor(item)} aria-pressed={color === item} className={`rounded-full border px-4 py-2 text-sm ${color === item ? "border-[#8B4513] bg-[#fff8f1] text-[#8B4513]" : "border-stone-200"}`}>{item}</button>)}</div></fieldset>}
-      {product.sizes.length > 0 && <fieldset><legend className="mb-3 text-sm font-semibold">Size: <span className="font-normal text-stone-500">{size}</span></legend><div className="flex flex-wrap gap-2">{product.sizes.map((item) => <button key={item} type="button" onClick={() => setSize(item)} aria-pressed={size === item} className={`min-w-11 rounded-full border px-4 py-2 text-sm ${size === item ? "border-[#8B4513] bg-[#fff8f1] text-[#8B4513]" : "border-stone-200"}`}>{item}</button>)}</div></fieldset>}
+      {product.colors.length > 0 && <fieldset><legend className="mb-3 text-sm font-semibold">{t("color")}: <span className="font-normal text-stone-500">{color}</span></legend><div className="flex flex-wrap gap-2">{product.colors.map((item) => <button key={item} type="button" onClick={() => setColor(item)} aria-pressed={color === item} className={`rounded-full border px-4 py-2 text-sm ${color === item ? "border-[#8B4513] bg-[#fff8f1] text-[#8B4513]" : "border-stone-200"}`}>{item}</button>)}</div></fieldset>}
+      {product.sizes.length > 0 && <fieldset><legend className="mb-3 text-sm font-semibold">{t("size")}: <span className="font-normal text-stone-500">{size}</span></legend><div className="flex flex-wrap gap-2">{product.sizes.map((item) => <button key={item} type="button" onClick={() => setSize(item)} aria-pressed={size === item} className={`min-w-11 rounded-full border px-4 py-2 text-sm ${size === item ? "border-[#8B4513] bg-[#fff8f1] text-[#8B4513]" : "border-stone-200"}`}>{item}</button>)}</div></fieldset>}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex h-11 items-center rounded-full border border-stone-200" aria-label="Quantity">
           <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3" aria-label="Decrease quantity"><Minus size={15} /></button>
           <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
           <button type="button" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="p-3" aria-label="Increase quantity"><Plus size={15} /></button>
         </div>
-        {product.stock > 0 ? <Button onClick={addToCart} className="flex-1 gap-2"><ShoppingBag size={17} /> Add to cart</Button> : <BackInStockButton productId={product.id} className="flex-1 gap-2" />}
-        <Button variant="outline" onClick={() => { toggleWishlist(product); toast.success(saved ? "Removed from wishlist" : "Saved to wishlist"); }} aria-label="Toggle wishlist">{saved ? <Check size={17} /> : <Heart size={17} />}</Button>
-        <Button variant="outline" onClick={share} aria-label="Share product"><Share2 size={17} /></Button>
+        {product.stock > 0 ? <Button onClick={addToCart} className="flex-1 gap-2"><ShoppingBag size={17} /> {t("addToCart")}</Button> : <BackInStockButton productId={product.id} className="flex-1 gap-2" />}
+        <Button variant="outline" onClick={() => { toggleWishlist(product); toast.success(saved ? "Removed from wishlist" : "Saved to wishlist"); }} aria-label={t("toggleWishlist")}>{saved ? <Check size={17} /> : <Heart size={17} />}</Button>
+        <Button variant="outline" onClick={share} aria-label={t("shareProduct")}><Share2 size={17} /></Button>
       </div>
+      <PriceAlertButton productId={product.id} className="w-full" />
     </div>
   );
 }

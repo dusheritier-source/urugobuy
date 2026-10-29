@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { User } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -18,15 +19,44 @@ import { auth, firebaseReady, googleProvider } from "@/lib/firebase";
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (newsletter?: boolean) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  createAccount: (email: string, password: string, name?: string) => Promise<void>;
+  createAccount: (email: string, password: string, name?: string, newsletter?: boolean) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   sendVerification: () => Promise<void>;
   signOutUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+async function queueWelcomeEmail(user: User) {
+  try {
+    const token = await user.getIdToken();
+    const response = await fetch("/api/auth/welcome", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+    if (!response.ok) throw new Error("Welcome email could not be queued");
+  } catch {
+    toast.error("Your account was created, but the welcome email could not be queued.");
+  }
+}
+
+async function saveNewsletterPreference(user: User, newsletter: boolean) {
+  if (!newsletter) return;
+  if (!user.emailVerified) {
+    toast.error("Verify your email first, then subscribe from profile email preferences.");
+    return;
+  }
+  try {
+    const token = await user.getIdToken();
+    const response = await fetch("/api/profile/email-preferences", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ newsletter: true }),
+    });
+    if (!response.ok) throw new Error("Newsletter subscription could not be saved");
+  } catch {
+    toast.error("Your account was created, but newsletter signup could not be saved. You can try again in email preferences.");
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -58,13 +88,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (newsletter = false) => {
     if (!auth || !googleProvider) {
       toast.error("Firebase authentication is not configured yet.");
       return;
     }
 
-    await signInWithPopup(auth, googleProvider);
+    const credential = await signInWithPopup(auth, googleProvider);
+    if (getAdditionalUserInfo(credential)?.isNewUser) await queueWelcomeEmail(credential.user);
+    await saveNewsletterPreference(credential.user, newsletter);
     toast.success("Signed in with Google");
   };
 
@@ -78,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     toast.success("Signed in successfully");
   };
 
-  const createAccount = async (email: string, password: string, name?: string) => {
+  const createAccount = async (email: string, password: string, name?: string, newsletter = false) => {
     if (!auth) {
       toast.error("Firebase authentication is not configured yet.");
       return;
@@ -87,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     if (name?.trim()) await updateProfile(credential.user, { displayName: name.trim() });
     await sendEmailVerification(credential.user);
+    await queueWelcomeEmail(credential.user);
+    await saveNewsletterPreference(credential.user, newsletter);
     toast.success("Account created successfully");
   };
 

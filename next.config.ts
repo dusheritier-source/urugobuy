@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
+  serverExternalPackages: ["@huggingface/transformers", "onnxruntime-node", "sharp"],
   images: {
     remotePatterns: [
       {

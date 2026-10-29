@@ -1,4 +1,5 @@
 "use client";
+import { sellingPrice } from "@/lib/product-pricing";
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
@@ -70,7 +71,7 @@ export function ProductsPageGridQuickView({ products }: { products: Product[] })
 
               <div className="mt-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xl font-semibold text-stone-900">${product.price}</p>
+                  <p className="text-xl font-semibold text-stone-900">${sellingPrice(product).toFixed(2)}</p>
                   <p className="text-sm text-stone-500">{product.stock} in stock</p>
                 </div>
 

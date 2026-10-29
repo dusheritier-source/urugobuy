@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Product } from "@/types";
+import { mergeBundle } from "@/lib/bundle-cart";
+import { sellingPrice } from "@/lib/product-pricing";
 import { trackCommerceEvent } from "@/lib/analytics";
 
 export interface CartItem extends Product {
@@ -14,6 +16,7 @@ interface CartStore {
   items: CartItem[];
   notice: CartNotice | null;
   addItem: (product: Product, quantity?: number) => CartMutation;
+  addBundle: (products: Product[]) => { accepted: boolean; message: string };
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => CartMutation;
   reconcileStock: (stock: Array<{ id: string; stock: number; price?: number | null; discount?: number | null }>) => void;
@@ -45,6 +48,14 @@ export const useCartStore = create<CartStore>()(
         }));
         trackCommerceEvent("add_to_cart", { value: product.price * accepted, items: [{ item_id: product.id, item_name: product.title, quantity: accepted }] });
         return { requested, accepted, reason: accepted < requested ? "clamped" : "added" };
+      },
+
+      addBundle: (products) => {
+        const result = mergeBundle(get().items, products);
+        if (!result.accepted) return result;
+        set({ items: result.items });
+        trackCommerceEvent("add_to_cart", { value: products.reduce((sum, product) => sum + sellingPrice(product), 0), items: products.map((product) => ({ item_id: product.id, item_name: product.title, quantity: 1 })) });
+        return { accepted: true, message: result.message };
       },
 
       removeItem: (id) => { trackCommerceEvent("remove_from_cart", { item_id: id }); return set((state) => ({ items: state.items.filter((item) => item.id !== id) })); },

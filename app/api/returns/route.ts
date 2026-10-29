@@ -1,3 +1,4 @@
+import { RETURN_WINDOW_DAYS } from "@/lib/store-policies";
 import { NextResponse } from "next/server";
 import { ApiError, apiError, authenticate, noStoreJson } from "@/lib/server/api";
 import { adminDb } from "@/lib/server/firebase-admin";
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
     const orderData = order.data()!;
     if (orderData.status !== "delivered") throw new ApiError(409, "Returns can be requested after delivery", "return_not_available");
     const deliveredAt = [...(orderData.trackingEvents ?? [])].reverse().find((event: { status?: string }) => event.status === "delivered")?.createdAt ?? orderData.updatedAt;
-    if (Date.now() - Date.parse(deliveredAt) > 30 * 24 * 60 * 60_000) throw new ApiError(409, "The 30-day return window has closed", "return_window_closed");
+    if (Date.now() - Date.parse(deliveredAt) > RETURN_WINDOW_DAYS * 24 * 60 * 60_000) throw new ApiError(409, "The 30-day return window has closed", "return_window_closed");
     const validProductIds = new Set((orderData.lines as Array<{ id: string }>).map((line) => line.id));
     if (input.productIds.some((id) => !validProductIds.has(id))) throw new ApiError(400, "Return contains a product outside this order", "invalid_return_items");
     const duplicate = await db.collection("returns").where("orderId", "==", input.orderId).where("customerId", "==", user.uid).limit(1).get();

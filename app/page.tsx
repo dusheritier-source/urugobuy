@@ -1,11 +1,16 @@
+import { SmartRecommendations } from "@/components/recommendations/smart-recommendations";
+import { publishedProducts } from "@/lib/server/catalog";
 import { HeroSection } from "@/components/home/hero";
 import { Categories } from "@/components/home/categories";
 import { ProductGrid } from "@/components/home/product-grid";
-import { categories, products, reviews } from "@/lib/data";
+import { categories, reviews } from "@/lib/data";
 import { ArrowRight, BadgeCheck, ShieldCheck, Truck } from "lucide-react";
 import Link from "next/link";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const products = await publishedProducts();
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-7 px-3 py-4 sm:gap-8 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
       <HeroSection />
@@ -28,6 +33,7 @@ export default function Home() {
         })}
       </section>
       <Categories categories={categories} />
+      <SmartRecommendations products={products} currency={process.env.PAYMENT_CURRENCY || "USD"} />
       <ProductGrid products={products.slice(0, 3)} title="Flash sale" />
       <ProductGrid products={products.slice(3)} title="Trending" />
       <section className="grid gap-6 rounded-[32px] border border-stone-200/70 bg-white p-6 shadow-sm lg:grid-cols-[1fr_0.85fr]">

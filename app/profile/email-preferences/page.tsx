@@ -1,115 +1,74 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, Bell, Tag, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Mail } from "lucide-react";
 import { toast } from "react-hot-toast";
-
-interface EmailPreference {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  enabled: boolean;
-}
+import { useAuth } from "@/components/auth/auth-provider";
 
 export default function EmailPreferencesPage() {
-  const [preferences, setPreferences] = useState<EmailPreference[]>([
-    {
-      id: "order-updates",
-      title: "Order Updates",
-      description: "Receive emails about your order status",
-      icon: Truck,
-      enabled: true,
-    },
-    {
-      id: "promotions",
-      title: "Promotions & Deals",
-      description: "Get notified about sales and special offers",
-      icon: Tag,
-      enabled: true,
-    },
-    {
-      id: "newsletter",
-      title: "Newsletter",
-      description: "Weekly newsletter with new arrivals and trends",
-      icon: Mail,
-      enabled: false,
-    },
-    {
-      id: "notifications",
-      title: "Push Notifications",
-      description: "Receive push notifications on your device",
-      icon: Bell,
-      enabled: true,
-    },
-  ]);
+  const { user, loading } = useAuth();
+  const [newsletter, setNewsletter] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
-  const togglePreference = (id: string) => {
-    setPreferences(preferences.map(pref => 
-      pref.id === id ? { ...pref, enabled: !pref.enabled } : pref
-    ));
+  useEffect(() => {
+    if (!user) { setLoaded(!loading); setNewsletter(false); return; }
+    let cancelled = false;
+    setLoaded(false);
+    void (async () => {
+      try {
+        await user.reload();
+        const token = await user.getIdToken(true);
+        const response = await fetch("/api/profile/email-preferences", {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error?.message ?? "Could not load email preferences");
+        if (!cancelled) setNewsletter(data.newsletter === true);
+        if (!cancelled) setEmailVerified(data.emailVerified === true);
+      } catch (error) {
+        if (!cancelled) toast.error(error instanceof Error ? error.message : "Could not load email preferences");
+      } finally {
+        if (!cancelled) setLoaded(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, loading]);
+
+  const save = async () => {
+    if (!user) return;
+    setBusy(true);
+    try {
+      await user.reload();
+      const token = await user.getIdToken(true);
+      const response = await fetch("/api/profile/email-preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ newsletter }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error?.message ?? "Could not save email preferences");
+      setNewsletter(data.newsletter === true);
+      toast.success("Email preferences saved");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save email preferences");
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const handleSave = async () => {
-    localStorage.setItem("urugo:communication-preferences", JSON.stringify(preferences.map(({ id, enabled }) => ({ id, enabled }))));
-    toast.success("Email preferences saved!");
-  };
-
-  return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-stone-900">Email Preferences</h1>
-        <p className="mt-2 text-stone-600">Manage how you receive communications from us</p>
-      </div>
-
-      <div className="space-y-4">
-        {preferences.map((preference) => {
-          const Icon = preference.icon;
-          return (
-            <div
-              key={preference.id}
-              className="rounded-[20px] border border-stone-200/70 bg-white p-6 shadow-sm"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#8B4513]/10">
-                  <Icon size={24} className="text-[#8B4513]" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-stone-900">{preference.title}</h3>
-                      <p className="mt-1 text-sm text-stone-600">{preference.description}</p>
-                    </div>
-                    <button
-                      onClick={() => togglePreference(preference.id)}
-                      className={cn(
-                        "relative inline-flex h-6 w-11 items-center rounded-full transition",
-                        preference.enabled ? "bg-[#8B4513]" : "bg-stone-200"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "inline-block h-4 w-4 transform rounded-full bg-white transition",
-                          preference.enabled ? "translate-x-6" : "translate-x-1"
-                        )}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <button
-        onClick={handleSave}
-        className="w-full rounded-full bg-[#8B4513] py-3 font-semibold text-white transition hover:bg-[#6d3410]"
-      >
-        Save Preferences
-      </button>
-    </div>
-  );
+  return <main className="mx-auto max-w-2xl space-y-6 px-4 py-10">
+    <div><h1 className="text-3xl font-bold text-stone-900 dark:text-white">Email Preferences</h1><p className="mt-2 text-stone-600 dark:text-stone-300">Choose whether you want to receive promotional emails from Urugo Buy.</p></div>
+    {!user && !loading ? <div className="rounded-2xl border border-stone-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900"><p className="text-sm text-stone-600 dark:text-stone-300">Sign in to manage your newsletter subscription.</p><Link href="/login" className="mt-4 inline-block font-semibold text-[#8B4513]">Sign in</Link></div> : <section className="rounded-[20px] border border-stone-200/70 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900">
+      <label className="flex items-start gap-4">
+        <Mail size={24} className="mt-1 shrink-0 text-[#8B4513]" />
+        <span className="flex-1"><span className="block font-semibold text-stone-900 dark:text-white">Newsletter and promotions</span><span className="mt-1 block text-sm text-stone-600 dark:text-stone-300">Occasional new arrivals, shopping news, and special offers. You can unsubscribe at any time.</span>{loaded && user && !emailVerified && <span className="mt-2 block text-sm text-amber-700">Verify your email address before subscribing to marketing emails.</span>}</span>
+        <input type="checkbox" checked={newsletter} disabled={!loaded || busy || !user || (!emailVerified && !newsletter)} onChange={(event) => setNewsletter(event.target.checked)} className="mt-1 h-5 w-5 accent-[#8B4513]" aria-label="Subscribe to newsletter and promotions" />
+      </label>
+      <button onClick={save} disabled={!loaded || busy || !user} className="mt-6 w-full rounded-full bg-[#8B4513] py-3 font-semibold text-white transition hover:bg-[#6d3410] disabled:opacity-50">{busy ? "Saving…" : "Save preferences"}</button>
+    </section>}
+  </main>;
 }
-
-import { cn } from "@/lib/utils";

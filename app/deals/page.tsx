@@ -1,6 +1,9 @@
-import { products } from "@/lib/data";
+import { publishedProducts } from "@/lib/server/catalog";
 
-export default function DealsPage() {
+export const revalidate = 60;
+
+export default async function DealsPage() {
+  const products = await publishedProducts();
   const deals = products.filter((product) => product.discount >= 12);
 
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ShoppingAssistant } from "@/components/assistant/shopping-assistant";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Providers } from "@/components/providers";
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div id="main-content" className="flex-1" tabIndex={-1}>{children}</div>
             <Footer />
           </div>
+          <ShoppingAssistant />
           <BottomNavigation />
           <ScrollToTop />
           <ComparisonTable />

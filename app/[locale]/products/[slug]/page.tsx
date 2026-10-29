@@ -8,11 +8,11 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = await params;
-  return generateProductMetadata({ params: Promise.resolve({ slug }) });
+  const { slug, locale } = await params;
+  return generateProductMetadata({ params: Promise.resolve({ slug, locale }) });
 }
 
 export default async function LocaleProductDetailPage({ params }: Props) {
-  const { slug } = await params;
-  return <ProductDetailPage params={Promise.resolve({ slug })} />;
+  const { locale, slug } = await params;
+  return <ProductDetailPage params={Promise.resolve({ locale, slug })} />;
 }

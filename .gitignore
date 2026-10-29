@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local package downloads and visual-search models
+/.npm-cache/
+/.cache/
+/test-results/
+/playwright-report/

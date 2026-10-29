@@ -21,8 +21,8 @@ service cloud.firestore {
     // Public shoppers may only see products explicitly marked as published.
     match /products/{productId} {
       allow read: if resource.data.status == "published" || isStaff();
-      allow create, update: if isStaff();
-      allow delete: if isAdmin();
+      // Publish through the staff API so price changes create durable events.
+      allow create, update, delete: if false;
     }
 
     // A customer owns their profile and nested preference/address records.
@@ -46,12 +46,27 @@ service cloud.firestore {
         allow read, write: if owns(userId) || isStaff();
       }
 
+      match /emailPreferences/{preferenceId} {
+        allow read: if owns(userId);
+        allow write: if false;
+      }
+
       match /wishlist/{productId} {
         allow read, write: if owns(userId) || isStaff();
       }
 
       match /backInStock/{productId} {
         allow read, write: if owns(userId) || isStaff();
+      }
+
+      match /notifications/{notificationId} {
+        allow read: if owns(userId);
+        allow write: if false;
+      }
+
+      match /priceAlerts/{productId} {
+        allow read: if owns(userId);
+        allow write: if false;
       }
     }
 

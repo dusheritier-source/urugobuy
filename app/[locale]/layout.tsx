@@ -32,7 +32,6 @@ locale: locale,
       title: "Urugo Buy | Premium shopping in Rwanda",
       description: "A premium e-commerce experience for modern shoppers in Rwanda.",
     },
-    metadataBase: undefined,
     // Next doesn't use html lang from Metadata; we set it in the layout.
     // Keep this for future enhancements.
     other: {

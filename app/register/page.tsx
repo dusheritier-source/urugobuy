@@ -17,6 +17,7 @@ export default function RegisterPage() {
     password: "",
     name: "",
     confirmPassword: "",
+    newsletter: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +32,7 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      await createAccount(formData.email.trim(), formData.password, formData.name);
+      await createAccount(formData.email.trim(), formData.password, formData.name, formData.newsletter);
       router.push("/profile");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Registration failed");
@@ -44,7 +45,7 @@ export default function RegisterPage() {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(formData.newsletter);
       router.push("/profile");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Google sign in failed");
@@ -160,6 +161,10 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
+            <label className="flex items-start gap-3 text-sm text-stone-600">
+              <input type="checkbox" checked={formData.newsletter} onChange={(e) => setFormData({ ...formData, newsletter: e.target.checked })} className="mt-1 accent-[#8B4513]" />
+              <span>Send me occasional news, new arrivals, and special offers by email. I can unsubscribe anytime.</span>
+            </label>
 
             <button
               type="submit"
@@ -181,4 +186,3 @@ export default function RegisterPage() {
     </main>
   );
 }
-

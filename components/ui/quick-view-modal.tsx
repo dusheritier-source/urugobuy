@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Heart } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ImageZoom } from "@/components/ui/image-zoom";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
+import { useUIStore } from "@/store/ui-store";
 import { useCartStore } from "@/store/cart-store";
 import { BackInStockButton } from "@/components/products/back-in-stock-button";
 import toast from "react-hot-toast";
@@ -23,6 +24,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
   const [selectedImage, setSelectedImage] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
   const { locale } = useLocale();
+  const remember = useUIStore((state) => state.addToRecentlyViewed);
+  useEffect(() => { if (isOpen && product?.id) remember(product.id); }, [isOpen, product?.id, remember]);
 
   const computed = useMemo(() => {
     if (!product) return null;

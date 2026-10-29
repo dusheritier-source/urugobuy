@@ -8,17 +8,16 @@ import { usePathname } from "next/navigation";
 import { useCartStore } from "@/store/cart-store";
 import { useLocale } from "@/components/locale/locale-context";
 
-const navItems: Array<{ href: string; icon: React.ComponentType<{ size?: number }>; label: string }> = [
-  { href: "/", icon: Home, label: "Home" },
-  { href: "/products", icon: Search, label: "Search" },
-  { href: "/cart", icon: ShoppingCart, label: "Cart" },
-  { href: "/profile", icon: User, label: "Profile" },
-];
-
 export function BottomNavigation() {
   const pathname = usePathname();
   const cartCount = useCartStore((state) => state.items.reduce((total, item) => total + item.quantity, 0));
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
+  const navItems: Array<{ href: string; icon: React.ComponentType<{ size?: number }>; label: string }> = [
+    { href: "/", icon: Home, label: t("home") },
+    { href: "/products", icon: Search, label: t("search") },
+    { href: "/cart", icon: ShoppingCart, label: t("cart") },
+    { href: "/profile", icon: User, label: t("profile") },
+  ];
 
   return (
     <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#eadfd4] bg-[var(--mobile-surface)]/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_35px_-18px_rgba(113,55,15,0.24)] backdrop-blur-xl md:hidden dark:border-white/10 dark:bg-slate-950/95">

@@ -1,3 +1,5 @@
+import type { SupportedLanguage } from "@/lib/locale";
+
 export interface Product {
   id: string;
   title: string;
@@ -14,6 +16,7 @@ export interface Product {
   sizes: string[];
   createdAt: string;
   updatedAt: string;
+  translations?: Partial<Record<SupportedLanguage, { title?: string; description?: string }>>;
 }
 
 export interface Category {

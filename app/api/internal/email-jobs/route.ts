@@ -1,3 +1,4 @@
+import { sellingPrice } from "@/lib/product-pricing";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { apiError } from "@/lib/server/api";
@@ -19,6 +20,17 @@ export async function POST(request: Request) {
     const snapshot = await db.collection("notificationQueue").where("status", "==", "pending").limit(25).get();
     const results = [];
     for (const document of snapshot.docs) {
+      const queuedData = document.data();
+      if (queuedData.type === "newsletter_campaign" && queuedData.campaignId) {
+        const campaign = await db.collection("emailCampaigns").doc(String(queuedData.campaignId)).get();
+        if (campaign.data()?.status !== "queued") {
+          if (campaign.data()?.status === "failed") {
+            await document.ref.update({ status: "skipped", skippedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            results.push({ id: document.id, status: "skipped" });
+          }
+          continue;
+        }
+      }
       const claimed = await db.runTransaction(async (transaction) => {
         const current = await transaction.get(document.ref);
         if (!current.exists || current.data()?.status !== "pending") return false;
@@ -29,6 +41,31 @@ export async function POST(request: Request) {
       try {
         const data = document.data();
         if (!data.email) throw new Error("Notification has no recipient email");
+        if (data.type === "price_drop") {
+          const watch = await db.collection("users").doc(String(data.userId)).collection("priceAlerts").doc(String(data.productId)).get();
+          if (watch.data()?.active !== true || watch.data()?.emailEnabled !== true || watch.data()?.watchVersion !== data.watchVersion || (watch.data()?.targetPrice != null && Number(data.newPrice) > Number(watch.data()?.targetPrice))) {
+            await document.ref.update({ status: "skipped", skippedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            results.push({ id: document.id, status: "skipped" });
+            continue;
+          }
+        }
+        if (data.type === "newsletter_campaign") {
+          const preference = await db.collection("users").doc(String(data.userId)).collection("emailPreferences").doc("marketing").get();
+          if (preference.data()?.newsletter !== true || preference.data()?.emailVerified !== true) {
+            await document.ref.update({ status: "skipped", skippedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            results.push({ id: document.id, status: "skipped" });
+            continue;
+          }
+        }
+        if (data.type === "price_drop") {
+          const snapshot = await db.collection("products").doc(String(data.productId)).get();
+          const product = snapshot.data();
+          if (product?.status !== "published" || Number(product.stock) < 1 || sellingPrice({ price: Number(product.price), discount: Number(product.discount ?? 0) }) > Number(data.newPrice)) {
+            await document.ref.update({ status: "skipped", skippedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            results.push({ id: document.id, status: "skipped" });
+            continue;
+          }
+        }
         const suppressionId = createHash("sha256").update(String(data.email).toLowerCase()).digest("hex");
         if ((await db.collection("emailSuppressions").doc(suppressionId).get()).exists) throw new Error("Recipient is suppressed after a bounce or complaint");
         const providerMessageId = await sendEmailJob(document.id, data as Parameters<typeof sendEmailJob>[1]);
