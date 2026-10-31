@@ -2,4 +2,45 @@
 import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) { useEffect(() => { console.error(error); }, [error]); return <main className="mx-auto max-w-lg px-4 py-20 text-center"><AlertTriangle className="mx-auto text-amber-600 dark:text-orange-500" size={48} /><h1 className="mt-4 text-2xl font-semibold text-stone-950 dark:text-white">Something went wrong</h1><p className="mt-2 text-stone-600 dark:text-stone-300">We couldn't display this page. No checkout or payment action was retried automatically.</p><Button onClick={reset} className="mt-6">Try again</Button>{(error.message || error.digest) && <details className="mt-6 rounded-2xl border border-stone-200 p-4 text-left text-sm dark:border-white/10"><summary className="cursor-pointer font-semibold">Error details</summary>{error.message && <p className="mt-3 break-words text-stone-600 dark:text-stone-300">{error.message}</p>}{error.digest && <p className="mt-2 break-all font-mono text-xs text-stone-500 dark:text-stone-400">Reference: {error.digest}</p>}</details>}</main>; }
+
+export default function ErrorPage({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <main className="mx-auto max-w-lg px-4 py-20 text-center">
+      <AlertTriangle className="mx-auto text-amber-600 dark:text-orange-500" size={48} />
+      <h1 className="mt-4 text-2xl font-semibold text-stone-950 dark:text-white">
+        Something went wrong
+      </h1>
+      <p className="mt-2 text-stone-600 dark:text-stone-300">
+        We couldn&apos;t display this page. No checkout or payment action was retried automatically.
+      </p>
+      <Button onClick={reset} className="mt-6">
+        Try again
+      </Button>
+      {(error.message || error.digest) && (
+        <details className="mt-6 rounded-2xl border border-stone-200 p-4 text-left text-sm dark:border-white/10">
+          <summary className="cursor-pointer font-semibold">Error details</summary>
+          {error.message && (
+            <p className="mt-3 break-words text-stone-600 dark:text-stone-300">
+              {error.message}
+            </p>
+          )}
+          {error.digest && (
+            <p className="mt-2 break-all font-mono text-xs text-stone-500 dark:text-stone-400">
+              Reference: {error.digest}
+            </p>
+          )}
+        </details>
+      )}
+    </main>
+  );
+}
